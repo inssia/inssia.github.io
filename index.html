@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -11,6 +12,20 @@
     </form>
 
     <script>
+    //--------------
+    // Audio Object
+    //--------------
+    var audio = {
+        buffer: {},
+        compatibility: {},
+        files: [
+            'synth.wav',
+            'beat.wav'
+        ],
+        proceed: true,
+        source_loop: {},
+        source_once: {}
+    };
 
     //-----------------
     // Audio Functions
