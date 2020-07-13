@@ -59,7 +59,7 @@
     };
 	
 	audio.changeVolume = function(element) {
-	this.gainNode = context.createGain();
+	this.gainNode = audio.context.createGain();
 	audio.source_loop.connect(this.gainNode);
 	this.gainNode.connect(audio.context.destination);
 	var volume = element.value;
