@@ -14,7 +14,7 @@
         <button id="button-loop-2" type="button" value="2">Drip</button>
     </form>
 	
-	<!--<p><input type="range" min="0" max="100" value="100" oninput="audio.changeVolume(this);"> Volume</p> -->
+	<p><input type="range" min="0" max="100" value="100" oninput="audio.changeVolume(this);"> Volume</p>
 
 
     <script>
@@ -58,7 +58,7 @@
         return offset;
     };
 	
-	/*audio.changeVolume = function(element, n) {
+	audio.changeVolume = function(element, n) {
 				this.gainNode = audio.context.createGain();
 				audio.source_loop[n] = audio.context.createBufferSource();
 				audio.source_loop[n].connect(audio.context.destination);
@@ -69,7 +69,7 @@
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
 				this.gainNode.gain.value = fraction * fraction;
-				}; */
+				}; 
 	
 
     audio.play = function(n) {
