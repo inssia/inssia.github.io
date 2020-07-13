@@ -58,16 +58,10 @@
         return offset;
     };
 	
-	
-
-    audio.play = function(n) {
-		
-        if (audio.source_loop[n]._playing) {
-            audio.stop(n);
-        } else {
-            audio.source_loop[n] = audio.context.createBufferSource();
-				audio.changeVolume = function(element) {
+	audio.changeVolume = function(element, n) {
 				this.gainNode = audio.context.createGain();
+				audio.source_loop[n] = audio.context.createBufferSource();
+				audio.source_loop[n].connect(audio.context.destination);
 				audio.source_loop[n].connect(this.gainNode);
 				this.gainNode.connect(audio.context.destination);
 				var volume = element.value;
@@ -76,6 +70,14 @@
 			  // sound as good.
 				this.gainNode.gain.value = fraction * fraction;
 				};
+	
+
+    audio.play = function(n) {
+		
+        if (audio.source_loop[n]._playing) {
+            audio.stop(n);
+        } else {
+            audio.source_loop[n] = audio.context.createBufferSource();
             audio.source_loop[n].buffer = audio.buffer[n];
             audio.source_loop[n].loop = true;
             audio.source_loop[n].connect(audio.context.destination);
