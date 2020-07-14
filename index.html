@@ -58,11 +58,11 @@
         return offset;
     };
 	
-	audio.changeVolume = function(element, n) {
+	audio.changeVolume = function(element) {
 				this.gainNode = audio.context.createGain();
-				audio.source_loop[n] = audio.context.createBufferSource();
-				audio.source_loop[n].connect(audio.context.destination);
-				audio.source_loop[n].connect(this.gainNode);
+				audio.source_loop = audio.context.createBufferSource();
+				audio.source_loop.connect(audio.context.destination);
+				audio.source_loop.connect(this.gainNode);
 				this.gainNode.connect(audio.context.destination);
 				var volume = element.value;
 				var fraction = parseInt(element.value) / parseInt(element.max);
