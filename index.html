@@ -1,190 +1,2297 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE HTML>
+<HTML xmlns="https://www.w3.org/1999/xhtml" lang="en">
+
 <head>
-    <meta charset="utf-8">
-    <title>Web Audio API Loops Demo</title>
+<link rel="stylesheet" href="/JQ/jquery-ui-1.10.3/themes/base/jquery-ui.css" />
+<link href="/CSS/player.css" rel="stylesheet" type="text/css" />
+<link href="/CSS/main.css?208" rel="stylesheet" type="text/css" /><link href="/CSS/jquery.jscrollpane.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jScrollPane/2.2.2/script/jquery.jscrollpane.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js"></script>
+<script type="text/javascript" id="sourcecode">
+	$(function(){$('.scroll-pane').jScrollPane({mouseWheelSpeed: 19});});
+	$(window).on("load resize",function() {$('.scroll-pane').jScrollPane({wheelSpeed: 19});});
+</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-powertip/1.2.0/jquery.powertip.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/CSS/jquery.powertip.css" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="author" content="Dr. Ir. St&eacute;phane Pigeon">
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0088ff">
+<meta name="theme-color" content="#000000">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<LINK REL="image_src" HREF="https://mynoise.net/Data/CUSTOM_CITYRAIN/fb.jpg" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@audiosampling">
+<meta name="twitter:title" content="Rain in the City • Background Ambience Generator">
+<meta name="twitter:description" content="Interactive (Rainy) Urban Soundscape">
+<meta name="twitter:image:src" content="https://mynoise.net/Data/CUSTOM_CITYRAIN/fb.jpg">
+
+
+<!-- Open Graph -->
+<meta property="og:audio" content="https://myNoise.net/Data/CUSTOM_CITYRAIN/demo.mp3" />
+<meta property="og:audio" content="https://myNoise.net/Data/CUSTOM_CITYRAIN/demo.ogg" />
+<meta property="og:image" content="https://mynoise.net/Data/CUSTOM_CITYRAIN/fb.jpg" />
+<!-- App Links -->
+<meta name="apple-itunes-app" content="app-id=813099896, app-argument=mynoise://" >
+<meta property="al:ios:url" content="mynoise://play/CUSTOM_CITYRAIN/" />
+<meta property="al:ios:app_store_id" content="813099896" />
+<meta property="al:ios:app_name" content="myNoise" />
+
+<TITLE>Rain in the City • Background Ambience Generator</TITLE>
+<META NAME="keywords" content="noise, noise machine, sleeping machine, sleeping aid, sleeping device, noise device, baby, tinnitus, sound healing, noise masking, noise therapy, sound therapy, hearing thresholds">
+<META NAME="description" content="Interactive (Rainy) Urban Soundscape">
+
+<script>
+
+
+// Cleverly designed, badly programmed by Stephane Pigeon 
+// (c) Dr. Ir. Stephane Pigeon - myNoise.net 2013-20 - stephane at mynoise.net
+// Last update 2020-06-25
+
+var iNUMBERBANDS=10;
+var bCALIBRATE=0;
+var bMUTE=0;var bMUTEsaved=0;
+var bANIMATE=0;var bNOWMOVING=0;var bNOWMOVINGUP=1;
+var bFINISHEDLOADING=0;
+var bWEBAUDIO=0;var bSUPPORTOGG=0;var bSUPPORTMP3=0;
+var bSUSPENDED=0;
+var bSTARTMUTED=0;
+var sSYNCHRO="0123456789";
+var bPITCHRAN=0;
+var bOSAUTO=0;
+var iINITIALANIMATIONSPEED=32;
+var fAUDIOFADETIME=0.1;
+var timeOutOS = new Array();
+var iTimer=-1; var iMTimer=-1;
+var epoch=0;
+var fLevelMultiplier=1.1;
+var iAnimationFactor=1;var iAnimationMode=1;
+var iCurrentAnimationSpeed=iINITIALANIMATIONSPEED;
+var timerTimeout, modulationTimeout, fadeTimeOut, meditationInterval;
+var interval = new Array();
+var nextA = new Array();var nextB = new Array();
+var lastPlayedA = new Array();var lastPlayedB = new Array();
+var lastPlayedOS = [1,1,1,1,1,1,1,1,1,1];
+var randomCounter=0;
+var currentLevel = new Array();
+var savedCurrentLevel = new Array();
+var savedLevel = new Array();
+var randomLevel = new Array();
+var fMotionStates = new Array();
+var cloneURL, cookieURL;
+var detune=0;
+var selSliders=[1,1,1,1,1,1,1,1,1,1,0];
+var playbackFactor = new Array();
+var iNowMovingTo=0;
+var iFadeState=0;
+var mmMin, mmMax; mmMin=1;mmMax=0;
+var nzSliderIndex = new Array();
+var lastSlider;
+var URLmagic='';
+var uID='';
+var uIDS='';
+var gCarbMP3=[ 10,28,35,44,55,62,68,74,82,89,100,111,123,141,144,147,156,165,171,177 ];
+var gCarbOGG=[ 10,27,36,44,55,62,67,73,82,90,99,110,122,141,144,147,155,164,170,176 ];
+var gCarb;
+var pitchTable=[1];
+var meditationBell;
+var URLlevels='';var URLanimate='';var URLmute='';var URLbell='';var URLtimer='';var URLdetune='';var URLmagic='';var URLtitle='';
+
+function enableButton(id,bEnable) {
+	var el;
+	for (var i = 0; i < id.length; ++i) {
+		el=document.getElementById(id[i]);
+		if (el) {
+			if (bEnable) {
+					el.style.pointerEvents = 'auto';
+					$("#"+id[i]).removeClass("disabled");
+					if (!id[i].localeCompare("speed"))  $("#speedText").removeClass("disabled");
+					if (!id[i].localeCompare("mode"))  $("#modeText").removeClass("disabled");
+				}
+				else {
+					if (el) el.style.pointerEvents = 'none';
+					$("#"+id[i]).addClass("disabled");
+					if (!id[i].localeCompare("speed"))  $("#speedText").addClass("disabled");
+					if (!id[i].localeCompare("mode"))  $("#modeText").addClass("disabled");
+				}
+		} 
+	}
+}
+
+function activateButton(id,bActivate) { 
+	if (bActivate) for (var i = 0; i < id.length; ++i) $("#"+id[i]).addClass("active");
+	else for (var i = 0; i < id.length; ++i) $("#"+id[i]).removeClass("active");
+}
+
+function audibleButton(id,bAudible) { 
+	if (!bAudible) for (var i = 0; i < id.length; ++i) $("#"+id[i]).addClass("inaudible");
+	else for (var i = 0; i < id.length; ++i) $("#"+id[i]).removeClass("inaudible");
+}
+
+function msg(content) {document.getElementById('msg').innerHTML = content;}
+
+function resumeContext(){
+	 context.resume(); 
+	 nowPlaying();
+	 window.removeEventListener('click', resumeContext);
+	 window.removeEventListener('touched', resumeContext);
+	 bSUSPENDED=0;
+	 $('.contextPlay').hide();
+}
+
+function nowPlaying(){
+ if (bCALIBRATE==0) {msg("Now Playing..."); }
+  else {msg("1. Increase your computer's volume until you hear the static noise. Then, 2. move a slider.");}
+  enableButton(["reset","anim","mode","speed","volDown","volUp","mute","timer","bell","calib","play0","play1","play2","play3","play4","play5","play6","play7","play8","play9"],1);
+  audibleButton(["mode","speed"],0);
+  enableSliders();  loadURLsettings();
+}
+
+
+var stretch = [1.95,1.9,1.9,1.9,0,1.9,1.9,1.9,1.9,1.9];
+
+// html5 audio
+var  sourceFileA = new Array();
+var  sourceFileB = new Array();
+var  sourceA = new Array();
+var  sourceB = new Array();
+var  timeOut1 = new Array();
+var  timeOut2 = new Array();
+var  l = new Array();
+var  movedSlider;
+
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+// SOUNDS
+
+function assignSources(){
+
+	var fileExt=".mp3";
+	gCarb=gCarbMP3;
+	
+	if (bSUPPORTOGG==1) {fileExt=".ogg"; gCarb=gCarbOGG;}
+	
+	meditationBell = new Audio('/Audio/bell'+fileExt);
+	meditationBell.preload = 'auto';
+		
+	sourceFileA[0]='https://cdn.mynoise.net/Data/AFRICA/0b'+fileExt;
+	sourceFileB[0]='https://cdn.mynoise.net/Data/AFRICA/0a'+fileExt;
+		sourceFileA[1]='https://cdn.mynoise.net/Data/RAMASUNDAR/0b'+fileExt;
+	sourceFileB[1]='https://cdn.mynoise.net/Data/RAMASUNDAR/0a'+fileExt;
+		sourceFileA[2]='https://cdn.mynoise.net/Data/SUBURB/2b'+fileExt;
+	sourceFileB[2]='https://cdn.mynoise.net/Data/SUBURB/2a'+fileExt;
+		sourceFileA[3]='https://cdn.mynoise.net/Data/GTRACE/3b'+fileExt;
+	sourceFileB[3]='https://cdn.mynoise.net/Data/GTRACE/3a'+fileExt;
+		sourceFileA[4]='https://cdn.mynoise.net/Data/CARINTERIOR/4b'+fileExt;
+	sourceFileB[4]='https://cdn.mynoise.net/Data/CARINTERIOR/4a'+fileExt;
+			sourceFileA[5]='https://cdn.mynoise.net/Data/CARINTERIOR/5a'+fileExt;
+	sourceFileB[5]='https://cdn.mynoise.net/Data/CARINTERIOR/5b'+fileExt;
+		sourceFileA[6]='https://cdn.mynoise.net/Data/THUNDER/6b'+fileExt;
+	sourceFileB[6]='https://cdn.mynoise.net/Data/THUNDER/6a'+fileExt;
+		sourceFileA[7]='https://cdn.mynoise.net/Data/CAFE/7a'+fileExt;
+	sourceFileB[7]='https://cdn.mynoise.net/Data/CAFE/7b'+fileExt;
+		sourceFileA[8]='https://cdn.mynoise.net/Data/THUNDER/8a'+fileExt;
+	sourceFileB[8]='https://cdn.mynoise.net/Data/THUNDER/8b'+fileExt;
+		sourceFileA[9]='https://cdn.mynoise.net/Data/THUNDER/9a'+fileExt;
+	sourceFileB[9]='https://cdn.mynoise.net/Data/THUNDER/9b'+fileExt;
+	}
+
+// WEBAUDIO LOADER
+var  gainNodeA = new Array();
+var  gainNodeB = new Array();
+var  bufferList = new Array();
+var  loadCount=0;
+var context;
+
+function loadWebAudioSound(url,i) {
+  var request = new XMLHttpRequest();
+  request.open('GET', url, true);
+  request.responseType = 'arraybuffer';
+		
+  request.onload = function(){
+    context.decodeAudioData(request.response, function(decodedData) {
+      bufferList[i] = decodedData;
+      countIn();
+    });
+  }
+  
+// Automatic Fallback
+  request.onerror= function(){		
+  	if(url.indexOf('https://cdn.mynoise.net') > -1) {
+			url=url.substring(23);
+			loadWebAudioSound(url,i);
+			}};
+		
+  request.send();
+}
+
+function webAudioContextCheck() {
+	if(context.state == "suspended") {
+		bSUSPENDED=1;
+		$('.contextPlay').show();
+		msg("Check your browser settings to enable AutoPlay<br> or click the Play button to start.");
+		window.addEventListener('click', resumeContext, false);
+		window.addEventListener('touched', resumeContext, false);
+	}
+}
+
+function loadHTML5AudioSound(i){
+
+	sourceA[i] = new Audio(sourceFileA[i]);
+	sourceB[i] = new Audio(sourceFileB[i]);
+
+	sourceA[i].preload = 'auto';
+	sourceB[i].preload = 'auto';
+	
+	if (stretch[i]==0) {
+		sourceA[i].loop=1; 
+		sourceB[i].loop=1;
+		}
+	else {
+		sourceA[i].loop=0;
+		sourceB[i].loop=0;
+		}
+	
+	// Automatic Fallback
+	sourceA[i].addEventListener("error", function(){
+		if(sourceFileA[i].indexOf('https://cdn.mynoise.net') > -1) {
+			sourceFileA[i]=sourceFileA[i].substring(23);
+			sourceFileB[i]=sourceFileB[i].substring(23);
+			loadHTML5AudioSound(i);
+			}
+		});
+
+	sourceA[i].addEventListener("canplaythrough", function(){countIn()});
+	sourceB[i].addEventListener("canplaythrough", function(){countIn()});
+	
+	if (stretch[i]!=0) {
+		sourceA[i].addEventListener('playing',function(){willPlayB(i);}, false);
+		sourceB[i].addEventListener('playing',function(){willPlayA(i);}, false);
+		}
+}
+
+function loadAllSounds(){
+//------------------------------------------------------------------
+	if (bWEBAUDIO==1) {
+
+	  if (typeof AudioContext !== 'undefined') {context = new AudioContext();}
+	  else {context = new webkitAudioContext();}
+	  
+	  for (var i = 0; i < iNUMBERBANDS; ++i) loadWebAudioSound(sourceFileA[i],i);
+	  for (var i = 0; i < iNUMBERBANDS; ++i) loadWebAudioSound(sourceFileB[i],i+iNUMBERBANDS);
+	  
+	}
+//------------------------------------------------------------------
+	else{
+		for (var i = 0; i < iNUMBERBANDS; ++i) loadHTML5AudioSound(i);
+	}
+}
+
+function playAllSounds(){
+//------------------------------------------------------------------
+	if (bWEBAUDIO==1) {
+	  for (var i = 0; i < iNUMBERBANDS; ++i) startWebAudio(i)
+	}
+//------------------------------------------------------------------
+	else {
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			sourceA[i].play();
+			if (stretch[i]==0) sourceB[i].play();
+		}
+	}
+}
+
+function playOS(stem){
+	var colorTable=["100,50,0","200,0,0","255,128,0","150,190,0","0,200,0","0,200,170","0,140,220","0,0,255","140,0,170","200,140,255"];
+	var duration=0;
+	playbackFactor[stem]= pitchTable[Math.floor(Math.random() * pitchTable.length)]
+	if (lastPlayedOS[stem]) {
+		webAudioPlayBAt(stem,context.currentTime);
+		duration=sourceB[stem].buffer.duration;
+		msg(stem+' • 1 • '+playbackFactor[stem]);
+		}
+	else {
+		webAudioPlayAAt(stem,context.currentTime);
+		duration=sourceA[stem].buffer.duration;
+		msg(stem+' • 2 • '+playbackFactor[stem]);
+	}
+	lastPlayedOS[stem]=1-lastPlayedOS[stem];
+	$("#play"+stem).css('background', 'rgb('+colorTable[stem]+')');
+	clearTimeout(timeOutOS[stem]);	
+	timeOutOS[stem]=setTimeout(function(){
+		$("#play"+stem).css('background', 'rgba(0,0,0,0)');
+		if (bOSAUTO) { playOS(Math.floor(Math.random()*10)); }
+		},duration*1000/playbackFactor[stem]);
+	
+}
+
+function experimentalPitchRandom(){
+	bPITCHRAN++;
+	if (bPITCHRAN==7) bPITCHRAN=0;
+	switch(bPITCHRAN){
+	case 0: pitchTable=[1]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	case 1: pitchTable=[0.5]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	case 2: pitchTable=[2]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	case 3: pitchTable=[0.5,1]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	case 4: pitchTable=[0.5,1,2]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	case 5: pitchTable=[0.5,1,1.5]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	case 6: pitchTable=[0.5,0.75,1,1.5,2]; msg('<span class="lowlight">'+pitchTable.toString().replace(/,/g,' ')+'</span>'); break;
+	}
+}
+
+function experimentalOSauto(){
+	bOSAUTO=1-bOSAUTO;
+	if (bOSAUTO) msg('<span class="lowlight">Auto ON</span>'); else msg('<span class="lowlight">Auto OFF</span>');
+}
+
+function startWebAudio(i){
+	if (stretch[i]==0) sourceA[i].loop=1;
+	nextA[i]=context.currentTime;
+	nextB[i]=nextA[i]+Math.round(sourceA[i].buffer.duration*10)/20*stretch[i]/playbackFactor[i];
+	sourceA[i].start(nextA[i]);
+	lastPlayedA[i]=nextA[i];
+	if (stretch[i]!=0) {
+		  // take duration of the leader of the sync group
+		  webAudioPlayBAt(i,nextB[i]);
+		  lastPlayedB[i]=nextB[i];
+		}
+	else {
+		  sourceB[i].loop=1;
+		  sourceB[i].playbackRate.value=playbackFactor[i];
+		  sourceB[i].start(nextA[i]);
+		  lastPlayedB[i]=nextA[i];
+		}
+}
+
+function getDelayValue(stem,duration) {
+	var delay;
+	delay=duration*500; // in msec
+	delay=delay*parseFloat(stretch[stem]);
+	return delay;
+}
+
+function computeIntervals(){
+	// stems repeat every ((A+B)/2)*stretch and B starts after A/2*stretch - see doc. 
+	var durA, durB;
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		// buffer durations vary across browsers! Critical for sync gens, rounding off.
+		durA=Math.round(sourceA[i].buffer.duration*10)/10;
+		durB=Math.round(sourceB[i].buffer.duration*10)/10;
+		interval[i]=(durA+durB)/2*stretch[i]/playbackFactor[i];
+	}
+}
+
+function willPlayA(item){
+	clearTimeout(timeOut1[item]);
+	timeOut1[item] = setTimeout(function(){rewindAndPlayA(item);},getDelayValue(item,sourceB[item].duration));
+}
+
+function willPlayB(item){
+	clearTimeout(timeOut2[item]);	
+	timeOut2[item] = setTimeout(function(){rewindAndPlayB(item);},getDelayValue(item,sourceA[item].duration));
+}
+
+function rewindAndPlayA(item){
+	if (item==sSYNCHRO.indexOf(sSYNCHRO.charAt(item))) { // this is the first occurrence of the Sync group. Launch this sound and all others from the group.
+		for (var i = sSYNCHRO.indexOf(sSYNCHRO.charAt(item)); i < iNUMBERBANDS; ++i) {
+			if (sSYNCHRO.charAt(item)==sSYNCHRO.charAt(i)) { // belongs to the same group
+				if(!sourceA[i].paused) {sourceA[i].pause();}
+				sourceA[i].currentTime=0;
+				sourceA[i].play();
+			}
+		}
+	}
+}
+
+function rewindAndPlayB(item){
+	if (item==sSYNCHRO.indexOf(sSYNCHRO.charAt(item))) { // this is the first occurrence of the Sync group. Launch this sound and all others from the group.
+		for (var i = sSYNCHRO.indexOf(sSYNCHRO.charAt(item)); i < iNUMBERBANDS; ++i) {
+			if (sSYNCHRO.charAt(item)==sSYNCHRO.charAt(i)) { // belongs to the same group
+				if(!sourceB[i].paused) {sourceB[i].pause();}
+				sourceB[i].currentTime=0;
+				sourceB[i].play();
+			}
+		}
+	}
+}
+
+function webAudioPlayAAt(item,onContextTime){
+
+	// console.log('A@ '+context.currentTime+' for '+onContextTime+' on stem '+item);
+
+	if (item==sSYNCHRO.indexOf(sSYNCHRO.charAt(item))) { // this is the first occurrence of the Sync group
+	
+		nextB[item]+=interval[item];
+		sourceB[item].onended=function(){webAudioPlayBAt(item,nextB[item])};
+			
+		// This one and all others (sync)
+		for (var i = sSYNCHRO.indexOf(sSYNCHRO.charAt(item)); i < iNUMBERBANDS; ++i) {
+			if (sSYNCHRO.charAt(item)==sSYNCHRO.charAt(i)) { // belongs to the same group
+				  sourceA[i].disconnect(0); // canary crashed with sourceA[i].noteOff(0);
+				  sourceA[i] = context.createBufferSource();
+				  sourceA[i].buffer = bufferList[i];
+				  sourceA[i].playbackRate.value=playbackFactor[i];
+				  				  if ((bCALIBRATE==1)&&(i!=movedSlider)&&(movedSlider>-1)) gainNodeA[i].gain.setTargetAtTime(0,context.currentTime,0);
+				  sourceA[i].connect(gainNodeA[i]);
+				  sourceA[i].start(onContextTime);
+				  lastPlayedA[i]=onContextTime;
+			}
+		}
+	}
+    monitor();}
+
+
+function webAudioPlayBAt(item,onContextTime){
+
+	// console.log('B@ '+context.currentTime+' for '+onContextTime+' on stem '+item);
+
+	if (item==sSYNCHRO.indexOf(sSYNCHRO.charAt(item))) { // this is the first occurrence of the Sync group.
+	
+		nextA[item]+=interval[item];
+		sourceA[item].onended=function(){webAudioPlayAAt(item,nextA[item])};
+
+	 	// This one and all others (sync)
+		for (var i = sSYNCHRO.indexOf(sSYNCHRO.charAt(item)); i < iNUMBERBANDS; ++i) {
+			if (sSYNCHRO.charAt(item)==sSYNCHRO.charAt(i)) { // belongs to the same group
+				  sourceB[i].disconnect(0); // canary crashed with sourceB[i].noteOff(0);
+				  sourceB[i] = context.createBufferSource();
+				  sourceB[i].buffer = bufferList[i+iNUMBERBANDS];
+				  sourceB[i].playbackRate.value=playbackFactor[i];
+				  				  if ((bCALIBRATE==1)&&(i!=movedSlider)&&(movedSlider>-1)) gainNodeB[i].gain.setTargetAtTime(0,context.currentTime,0);
+				  sourceB[i].connect(gainNodeB[i]);
+				  sourceB[i].start(onContextTime);
+				  lastPlayedB[i]=onContextTime;
+			}
+		}
+	}
+	monitor();}
+
+function playBell(){
+// using simple html5 audio
+if (meditationBell.paused&&!bMUTE) {
+	var maxLevel=0;
+	for (var i = 0; i < iNUMBERBANDS; ++i) if (currentLevel[i]>maxLevel) maxLevel=currentLevel[i];
+	meditationBell.volume=Math.max(maxLevel/3,0.1);
+	meditationBell.play();
+	}
+}
+
+function stemDrop(){
+	var i=Math.floor(Math.random(1)*10);
+	console.log('Dropping stem '+i);
+	sourceA[i].disconnect(0);
+	sourceB[i].disconnect(0);
+}
+
+function monitor(){
+	var currentTime=context.currentTime;
+	var elapsed;
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		if (interval[i]>0) {
+		elapsed=Math.min(currentTime-lastPlayedA[i],currentTime-lastPlayedB[i]);
+		if (elapsed>(interval[i]*1.01))  {
+			console.log('Stem '+i+' was lost. Now restarting.');
+			lastPlayedA[i]=currentTime;lastPlayedB[i]=currentTime;
+			restartWebAudio(i);
+			}
+		}
+	}
+}
+
+function restartWebAudio(i){
+	sourceA[i].onended=null;
+	sourceB[i].onended=null;
+	sourceA[i].disconnect(0);
+	sourceB[i].disconnect(0);
+	sourceA[i] = context.createBufferSource();
+	sourceA[i].buffer = bufferList[i];
+	sourceA[i].playbackRate.value=playbackFactor[i];
+	sourceA[i].connect(gainNodeA[i]);
+	sourceB[i] = context.createBufferSource();
+	sourceB[i].buffer = bufferList[i+iNUMBERBANDS];
+	sourceB[i].playbackRate.value=playbackFactor[i];
+	sourceB[i].connect(gainNodeB[i]);
+	startWebAudio(i);
+}
+
+function killWebAudio(){  // does not free any memory :(
+	context.close();
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		sourceA[i].disconnect(0);sourceB[i].disconnect(0);
+		sourceA[i]=null;sourceB[i]=null;
+		bufferList[i]=null;bufferList[i+iNUMBERBANDS]=null;
+		gainNodeA[i].disconnect();gainNodeB[i].disconnect();
+		gainNodeA[i]=null;gainNodeB[i]=null;
+		}
+	bufferList=null;gainNodeA=null;gainNodeB=null;sourceA=null;sourceB=null;
+}
+
+// INIT
+
+var launchCounter=0;
+
+function countIn(){
+	// document.getElementById('carbonDiv').style.right="0px";
+	$('#carbonDiv').addClass('zeroRight');
+	if (++launchCounter==iNUMBERBANDS*2) {
+		setTimeout(function(){$('#carbonDiv').removeClass('zeroRight');},1250);
+		finishedLoading();
+	};
+	if (launchCounter<iNUMBERBANDS*2) {
+		msg("... now loading " + Math.round(launchCounter/iNUMBERBANDS/2*100) + "% ...");
+		if (document.getElementById('carbonText')) document.getElementById('carbonText').innerHTML="<a href='/carbonFootprintCompensation.php' target='_blank'>myNoise offsets its entire co2 footprint</a><br>   This page = <span class='carbon'>"+gCarb[launchCounter]+" gCO2e 🌱</span>";
+	}
+}
+
+function init() {
+
+window.onbeforeunload = function() {
+    killWebAudio(); // trying to avoid inherent WebAudio memory leak when reloading the page - doesn't work :(
+}
+if (!navigator.cookieEnabled) {window.location.href = "/showMessage.php?msgID=4";}
+
+var a = document.createElement('audio');
+if (!!(a.canPlayType && a.canPlayType('audio/ogg; codecs="vorbis"').replace(/no/, ''))){bSUPPORTOGG=1;};
+if (!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){bSUPPORTMP3=1;};
+
+if(typeof webkitAudioContext !== "undefined") bWEBAUDIO=1;
+if(typeof AudioContext !== "undefined") bWEBAUDIO=1;
+
+	/* var xhttp = new XMLHttpRequest();
+	if (bWEBAUDIO) xhttp.open("GET", "https://mynoise.net/count.php?c=w", true);
+	else xhttp.open("GET", "https://mynoise.net/count.php?c=h", true);
+	xhttp.send(); */
+
+console.log(navigator.userAgent);
+if (bWEBAUDIO) console.log('Web Audio CDN'); else console.log('HTML5 Audio CDN');
+
+    enableButton(["reset","anim","mode","speed","volDown","volUp","mute","timer","bell","calib","play0","play1","play2","play3","play4","play5","play6","play7","play8","play9"],0);
+	disableSliders();
+	initStates();
+	initTuning();
+	msg("... now loading ...");
+	assignSources();
+	loadAllSounds();
+	
+setPreset(0.7,0.2,0.3,0.4,0.4,0.4,0.4,0.4,0.4,0.4);
+ migrateCookies();	
+ 
+}
+
+function finishedLoading() {
+	
+//------------------------------------------------------------------
+	if (bWEBAUDIO==1) {
+
+	  for (var i = 0; i < iNUMBERBANDS; ++i) {
+		  sourceA[i] = context.createBufferSource();
+		  sourceA[i].buffer = bufferList[i];
+		  sourceA[i].playbackRate.value=playbackFactor[i];
+		  gainNodeA[i] = context.createGain();
+		  gainNodeA[i].gain.value = 0;
+		  sourceA[i].connect(gainNodeA[i]);
+		  gainNodeA[i].connect(context.destination);
+		}
+	  
+	  for (var i = 0; i < iNUMBERBANDS; ++i) {
+		  sourceB[i] = context.createBufferSource();
+		  sourceB[i].buffer = bufferList[i+iNUMBERBANDS];
+		  sourceA[i].playbackRate.value=playbackFactor[i];
+		  gainNodeB[i] = context.createGain();
+		  gainNodeB[i].gain.value = 0;
+		  sourceB[i].connect(gainNodeB[i]);
+		  gainNodeB[i].connect(context.destination);
+		}
+	computeIntervals();
+	}
+//------------------------------------------------------------------
+
+  getCurrentLevelsFromSliders();
+  loadCurrentLevelsFromURLAndSetSliders();
+  updateDocumentLinks();
+  
+  playAllSounds();setAllLevels();  
+  bFINISHEDLOADING=1;
+  
+// Suspended Policy by Mobile Browsers and Chrome!
+if (bWEBAUDIO==1) webAudioContextCheck();
+// Enable Buttons
+if (!bSUSPENDED) nowPlaying();
+
+    
+  
+  // Timer Gens
+  if (bSTARTMUTED==1) forceMute(1);
+   
+  // SuperGens - Calling Parent Function
+  if (window.parent!=window) window.parent.count();
+  
+  // Highlight Fav icon
+  checkFavGen();
+  
+}
+
+function pad(num) {
+    var s = "000" + num;
+    return s.substr(s.length-2);
+}
+
+function sliderChange(movedSliderName) {
+	if (bFINISHEDLOADING==1) {
+		movedSlider=movedSliderName.substring(1,2);
+		if (bCALIBRATE==1) {
+			for (var i = 0; i < iNUMBERBANDS; ++i){
+				if (i!=movedSlider) {
+				
+					if (bWEBAUDIO==1) {
+						gainNodeA[i].gain.setTargetAtTime(0,context.currentTime,0);
+						gainNodeB[i].gain.setTargetAtTime(0,context.currentTime,0);
+					}
+					else {
+						sourceA[i].volume=0; 
+						sourceB[i].volume=0; 
+						}
+					}
+			}
+			msg("2. Move each slider so that its associated sound becomes just audible to you.");
+		}
+		else {if (bANIMATE==0) msg("");}
+		currentLevel[movedSlider]=$( "#s"+movedSlider ).slider( "value" );
+		if (bWEBAUDIO==1) {
+			gainNodeA[movedSlider].gain.setTargetAtTime(Math.pow(currentLevel[movedSlider],3),context.currentTime,fAUDIOFADETIME);
+			gainNodeB[movedSlider].gain.setTargetAtTime(Math.pow(currentLevel[movedSlider],3),context.currentTime,fAUDIOFADETIME);
+				}
+		else {
+			sourceA[movedSlider].volume=Math.pow(currentLevel[movedSlider],3); 
+			sourceB[movedSlider].volume=Math.pow(currentLevel[movedSlider],3); 
+			}
+	}
+	updateDocumentLinks();
+	if (movedSliderName==lastSlider){ 
+		var db=Math.round(26*Math.log(currentLevel[movedSlider]));
+		msg(db+" dBFS");
+		}
+		else lastSlider=movedSliderName;
+		
+}
+
+function updateDocumentLinks(){
+	// var URLlevels='';var URLanimate='';var URLmute='';var URLbell='';var URLtimer='';var URLdetune='';
+	
+	URLlevels='l='+packCurrentLevels();
+		strippedDocumentURL='/NoiseMachines/customRainInTheCity.php';
+	
+	if (bANIMATE) URLanimate='&a='+iAnimationFactor+'&am='+iAnimationMode; else URLanimate='';
+	if (bMUTE) URLmute='&mt=1'; else URLmute='';
+	if (document.getElementById('customTitle')) URLtitle='&title='+encodeURI(document.getElementById('customTitle').textContent);
+	if (detune) URLdetune='&d='+detune; else URLdetune='';
+	
+	cloneURL=strippedDocumentURL+'?'+URLlevels+URLanimate+URLmagic+URLdetune+URLmute+URLbell+URLtimer+URLtitle+'&c=1'; //clone
+	cookieURL=URLlevels+URLanimate+URLdetune+URLmute+URLbell+URLtimer;cookieURL=cookieURL.substring(2);
+	$( "#customURL0" ).attr("href", strippedDocumentURL+'?'+URLlevels+URLanimate+URLmagic+URLdetune+URLmute+URLbell+URLtimer+URLtitle); // update URL
+	$( "#customURL1" ).attr("href", strippedDocumentURL+'?'+URLlevels+URLanimate+URLmagic+URLdetune+URLtitle+'&c=4'); // testimonial
+	$( "#customURL2" ).attr("href", strippedDocumentURL+'?'+URLlevels+URLanimate+URLmagic+URLdetune+URLtitle+'&c=2'); // order
+
+	var strLevels=currentLevel[0]+' '+currentLevel[1]+' '+currentLevel[2]+' '+currentLevel[3]+' '+currentLevel[4]+' '+currentLevel[5]+' '+currentLevel[6]+' '+currentLevel[7]+' '+currentLevel[8]+' '+currentLevel[9];
+	$( "#currentLevels" ).attr("title", strLevels);
+}
+
+function getLink(){
+	return cloneURL.slice(15);
+}
+
+function cloneIt() {
+	window.open("/clone.php?url="+encodeURIComponent(cloneURL),"_blank","toolbar=yes,scrollbars=yes,width=500,height=378");
+	document.location.href = "/noiseMachines.php";
+}
+
+function print(){
+console.log(currentLevel[0]+','+currentLevel[1]+','+currentLevel[2]+','+currentLevel[3]+','+currentLevel[4]+','+currentLevel[5]+','+currentLevel[6]+','+currentLevel[7]+','+currentLevel[8]+','+currentLevel[9]);
+}
+
+function getCurrentLevelsFromSliders(){
+	for (var i = 0; i < iNUMBERBANDS; ++i)  currentLevel[i]=$( "#s"+i ).slider( "value" );
+}
+
+function setCurrentLevelsToSliders(){
+	for (var i = 0; i < iNUMBERBANDS; ++i) $( "#s"+i ).slider("value", currentLevel[i]);
+}
+
+function setSlidersToZero(){
+	for (var i = 0; i < iNUMBERBANDS; ++i) $( "#s"+i ).slider("value", 0);
+}
+
+function setAllLevels(){
+//------------------------------------------------------------------
+	if (bWEBAUDIO==1) {
+
+	  for (var i = 0; i < iNUMBERBANDS; ++i) {
+		  gainNodeA[i].gain.setTargetAtTime(Math.pow(currentLevel[i],3),context.currentTime,fAUDIOFADETIME);
+		  gainNodeB[i].gain.setTargetAtTime(Math.pow(currentLevel[i],3),context.currentTime,fAUDIOFADETIME);
+		}
+		
+	}
+//------------------------------------------------------------------
+	else {
+	
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			sourceA[i].volume=Math.pow(currentLevel[i],3);
+			sourceB[i].volume=Math.pow(currentLevel[i],3);
+		}
+	
+	}
+}
+
+function fadeOut(out,steps){
+	// disable animation before fadeout
+	if ((bANIMATE==1)&&(out==1)&&(iFadeState==0)) clearTimeout(modulationTimeout);	
+	iFadeState+=1;
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		var fadeLvl;
+		if (out==1) fadeLvl=Math.max(0,Math.pow(currentLevel[i]-Math.pow(iFadeState,2)*currentLevel[i]/Math.pow(steps,2),3));
+		else fadeLvl=Math.min(0.99,Math.pow(Math.pow(iFadeState,0.2)*currentLevel[i]/Math.pow(steps,0.2),3));
+			if (bWEBAUDIO==1) {
+				if (gainNodeA[i]) gainNodeA[i].gain.setTargetAtTime(fadeLvl,context.currentTime,0);
+				if (gainNodeB[i]) gainNodeB[i].gain.setTargetAtTime(fadeLvl,context.currentTime,0);
+			}
+			else {
+				sourceA[i].volume=fadeLvl;
+				sourceB[i].volume=fadeLvl;
+			}
+	}
+	clearTimeout(fadeTimeOut);	
+	if (iFadeState<=steps) fadeTimeOut = setTimeout(function(){fadeOut(out,steps);},steps)
+	else {
+	iFadeState=0;
+	// enable animation after fade in
+	if ((bANIMATE==1)&&(out==0)) modulationRandom();
+	}
+}
+
+function tune(factor){detune=Math.round(Math.log2(factor)*12*1000)/1000;updatePlaybackRate();updateDocumentLinks();}
+
+function tuneDown(dec){
+	if (detune>999) detune=0; 
+	detune=detune-dec;detune=Math.max(detune,-36);updatePlaybackRate();
+	updateDocumentLinks();
+}
+
+function tuneUp(inc){
+	if (detune>999) detune=0; 
+	detune=detune+inc;detune=Math.min(detune,24);updatePlaybackRate();
+	updateDocumentLinks();
+}
+
+function octDown(){
+	if (detune>999) detune=0; 
+	detune-=12;detune=Math.max(detune,-36);updatePlaybackRate();
+	updateDocumentLinks();
+}
+
+function octUp(){
+	if (detune>999) detune=0; 
+	detune+=12;detune=Math.min(detune,24);updatePlaybackRate();
+	updateDocumentLinks();
+}
+
+function mixedTune(){
+	// aabbcc...jj where xx = 50+/-detune
+	var strSettings="";
+	for (var i=0; i<iNUMBERBANDS; ++i) strSettings+=(60-Math.round(Math.random()*24));
+	detune=strSettings;
+	updateDocumentLinks();
+	updatePlaybackRate();
+}
+
+function computePlaybackFactorsFromDetune(){
+for (var i = 0; i < iNUMBERBANDS; ++i) {
+ 	if (detune<999) playbackFactor[i]=Math.pow(2,(detune/12));
+		else playbackFactor[i]=Math.pow(2,(parseInt(detune.toString().substring(i*2,i*2+2))-50)/12);
+		  	
+}
+}
+
+function updatePlaybackRate(){
+	computePlaybackFactorsFromDetune();
+	computeIntervals();
+    for (var i = 0; i < iNUMBERBANDS; ++i) {
+	 	 restartWebAudio(i)
+		}
+}
+
+function setAnimationSpeed(value){
+ 	if(typeof value === "undefined") {
+		iAnimationFactor*=2; 
+		if (iAnimationFactor>4) iAnimationFactor=0.25;
+	}
+	else iAnimationFactor=value;
+	if (iAnimationFactor==1){
+		msg("Animation Speed : Normal");
+		document.getElementById('speedText').innerHTML = "";
+		}
+	if (iAnimationFactor==0.25){
+		msg("Animation Speed : Slowest");
+		document.getElementById('speedText').innerHTML = ": 4";
+		}
+	if (iAnimationFactor==0.5){
+		msg("Animation Speed : Slow");
+		document.getElementById('speedText').innerHTML = ": 2";
+		}
+	if (iAnimationFactor==2){
+		msg("Animation Speed : Fast");
+		document.getElementById('speedText').innerHTML = "2x";
+		}
+	if (iAnimationFactor==4){
+		msg("Animation Speed : Fastest");
+		document.getElementById('speedText').innerHTML = "4x";
+		}
+	updateDocumentLinks();
+	startModulation();
+}
+
+function setAnimationMode(value){
+ 	if(typeof value === "undefined") {
+		iAnimationMode+=1; 
+		if (iAnimationMode>8) iAnimationMode=1;
+	}
+	else iAnimationMode=value;
+	if (iAnimationMode==1){
+		msg("Animation Mode : Default (50-125%)");
+		document.getElementById('modeText').innerHTML = "";
+		}
+	if (iAnimationMode==2){
+		msg("Animation Mode : Subtle (80-110%)");
+		document.getElementById('modeText').innerHTML = "sb";
+		}
+	if (iAnimationMode==3){
+		msg("Animation Mode : Deep (0-150%)");
+		document.getElementById('modeText').innerHTML = "dp";
+		}
+	if (iAnimationMode==4){
+		msg("Animation Mode : Minimax (between lowest/highest sliders, zero excluded)");
+		document.getElementById('modeText').innerHTML = "mm";
+		}
+	if (iAnimationMode==5){
+		msg("Animation Mode : Extreme (0% or 100%)");
+		document.getElementById('modeText').innerHTML = "ex";
+		}
+	if (iAnimationMode==6){
+		msg("Animation Mode : Shuffle");
+		document.getElementById('modeText').innerHTML = "sh";
+		}
+	if (iAnimationMode==7){
+		msg("Animation Mode : Shuffle (zero excluded)");
+		document.getElementById('modeText').innerHTML = "sx";
+		}
+	if (iAnimationMode==8){
+		msg("Animation Mode : Sequence (reveal zeroes)");
+		document.getElementById('modeText').innerHTML = "sq0";
+		}
+	updateDocumentLinks();
+	startModulation();
+}
+
+function setPreset(l0,l1,l2,l3,l4,l5,l6,l7,l8,l9,text){
+		if (bMUTE==1) toggleMute();
+		currentLevel[0] = l0;
+		currentLevel[1] = l1;
+		currentLevel[2] = l2;
+		currentLevel[3] = l3;
+		currentLevel[4] = l4;
+		currentLevel[5] = l5;
+		currentLevel[6] = l6;
+		currentLevel[7] = l7;
+		currentLevel[8] = l8;
+		currentLevel[9] = l9;
+		saveRandomExchange();
+		if (bANIMATE==0) {
+		  setCurrentLevelsToSliders();
+		  if(typeof(text)==='undefined') msg("");
+		  else msg(text);
+		}
+		customLinkAssign('emphasis','actionlink','Apply Calibration',emphasis);
+}
+
+function resetSliders(){
+setPreset(0.7,0.2,0.3,0.4,0.4,0.4,0.4,0.4,0.4,0.4,"Back to Default");}
+
+function randomSettings(){
+		var power=0;
+		var mx=0;
+		var multiplier;
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			currentLevel[i] = Math.random();
+			power+=currentLevel[i]*currentLevel[i];
+			if (currentLevel[i]>mx) mx=currentLevel[i]
+			}
+		targetAvgLevel=0.35;
+		multiplier=targetAvgLevel/Math.sqrt(power/10);
+		if (mx*multiplier>70) multiplier=70/mx;
+		for (var i = 0; i < iNUMBERBANDS; ++i) currentLevel[i]=currentLevel[i]*multiplier;
+		
+		saveRandomExchange();
+		if (bANIMATE==0) {
+			setCurrentLevelsToSliders();
+			msg("Random");
+		}
+}
+
+function packCurrentLevels(){
+var str;
+str=pad(Math.round(currentLevel[0]*100))+pad(Math.round(currentLevel[1]*100))+pad(Math.round(currentLevel[2]*100))+pad(Math.round(currentLevel[3]*100))+pad(Math.round(currentLevel[4]*100))+pad(Math.round(currentLevel[5]*100))+pad(Math.round(currentLevel[6]*100))+pad(Math.round(currentLevel[7]*100))+pad(Math.round(currentLevel[8]*100))+pad(Math.round(currentLevel[9]*100));
+return str;
+}
+
+function unpackAndSetCurrentLevels(strLevels){
+	for (var i = 0; i < iNUMBERBANDS; ++i) {currentLevel[i] = strLevels.substring(2*i,2*i+2)/100;}
+	// if animation setting exist
+	if (strLevels.length>iNUMBERBANDS*2) {
+		var num=strLevels[iNUMBERBANDS*2];
+		var denum=strLevels[iNUMBERBANDS*2+1];
+		if ((num!=0)&&(denum!=0)) { iAnimationFactor=num/denum; if(bANIMATE==0) {toggleModulation();}}
+	}
+}
+
+function saveCurrentLevelsToCookie(tag){
+	// omit tag for personal curve
+	if (tag === undefined) tag="CAL";
+	// load Cookie
+	var userData={};
+	var cookieName='uSET_'+uIDS;
+	if (cookieName=='uSET_') cookieName='uSET_unlogged';
+	var tmp = JSON.parse(readCookie(cookieName));
+	if (tmp!=null) userData = tmp;
+	// Save Associative Array
+	userData[tag]=cookieURL;
+	// Save Assicative Array
+	var days=36500;
+	createCookie(cookieName,JSON.stringify(userData),days);
+	if (tag!="CAL") msg("This generator settings have been saved as a browser cookie...");
+}
+
+function loadCurrentLevelsFromCookieAndSetSliders(tag){
+	if (tag === undefined) tag="CAL";
+	var userData={};
+	var cookieName='uSET_'+uIDS;
+	if (cookieName=='uSET_') cookieName='uSET_unlogged';
+	var tmp = JSON.parse(readCookie(cookieName));
+	if (tmp!=null) userData = tmp;
+	if (userData[tag]!=null) {
+		settings=userData[tag].split('&');
+		unpackAndSetCurrentLevels(settings[0]);
+		if (bANIMATE==1) saveRandomExchange(); 
+		 else {
+			setCurrentLevelsToSliders();
+			if (tag=="CAL") msg("Your Personal Curve");
+			else msg("Your Custom Settings for this noise");
+			}
+		for (var k = 1; k < settings.length; ++k) {
+			if (settings[k].includes('bl=')) {tmp=settings[k].split('=');if (tmp[1]!==0){setMeditationBell(tmp[1]);activateButton(["bell"],1);}}
+			if (settings[k].includes('tm=')) {tmp=settings[k].split('=');if (tmp[1]!==0){setTimer(tmp[1]);activateButton(["timer"],1);}}
+			if (settings[k].includes('mt=')) {tmp=settings[k].split('=');if (tmp[1]==1)forceMute(1);} else forceMute(0);
+		}
+	}
+	else {
+			if (tag=="CAL") msg("ERROR: no data found. Please  <a href='/calibration.php'>calibrate</a> (donor, log in first).");
+			else msg("ERROR: no user setting found, save one first.");
+	}
+}
+
+function migrateCookies(){
+	var days=36500;
+	var cookieName='uSET_'+uID;
+	var cookieNameS='uSET_'+uIDS;
+	var tmp=readCookie(cookieName);
+	if (tmp) { createCookie(cookieNameS,tmp,days); eraseCookie(cookieName);}
+	var cookieName='fSET_'+uID;
+	var cookieNameS='fSET_'+uIDS;
+	var tmp=readCookie(cookieName);
+	if (tmp) { createCookie(cookieNameS,tmp,days); eraseCookie(cookieName);}
+}
+
+
+// Apply Calibration to current sliders
+
+function emphasis(){
+	var tag="CAL";
+	var calLevel;
+	var userData={};
+	var cookieName='uSET_'+uIDS;
+	if (cookieName=='uSET_') cookieName='uSET_unlogged';
+	var tmp=readCookie(cookieName);
+	if (tmp!=null) userData=JSON.parse(tmp);
+	if (userData[tag]!=null) {
+	
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			calLevel= userData[tag].substring(2*i,2*i+2)/100;
+			currentLevel[i]=currentLevel[i]*(calLevel/0.3);
+		}
+		setCurrentLevelsToSliders();
+		msg("Calibrated!");
+		}
+		
+	else {
+	msg("ERROR: no calibration found. Please <a href='/calibration.php'>calibrate</a> first.");
+	}
+	customLinkAssign('emphasis','lowlight','Now Calibrated','');
+}
+
+function customLinkAssign(id,classname,innerhtml,onclickfuntion) {
+if (document.getElementById(id)) {
+	document.getElementById(id).className = classname;
+	document.getElementById(id).innerHTML = innerhtml;
+	document.getElementById(id).onclick = onclickfuntion;
+	}
+}
+
+function loadCurrentLevelsFromURLAndSetSliders(){
+	var args=getUrlVars();
+	if (args['l']!== undefined) {
+		var code=args['l'];
+		code.replace(/\D/g,''); // XSS zapping all non digits 
+		for (var i = 0; i < iNUMBERBANDS; ++i) {currentLevel[i] = code.substring(2*i,2*i+2)/100;}
+		setCurrentLevelsToSliders();
+	}
+}
+
+function loadURLsettings(){
+	var args=getUrlVars();
+	if (args['tm']!== undefined) {
+		var minutes=parseInt(args['tm']);
+		if (typeof minutes === 'number') {
+			setTimer(minutes);
+			activateButton(["timer"],1);
+		}
+	}
+	if (args['bl']!== undefined) {
+		var minutes=decodeURIComponent(args['bl']);
+		if ( (minutes>0) || (minutes.includes(':')) ){
+			setMeditationBell(minutes);
+			activateButton(["bell"],1);
+		}
+	}
+	if (args['mt']!== undefined) {
+		var mute=parseInt(args['mt']);
+		if (mute==1) forceMute(1);
+	}
+}
+
+function initTuning(){
+	for (var i = 0; i < iNUMBERBANDS; ++i) playbackFactor[i]=1;
+	var args=getUrlVars();
+	if (args['d']!== undefined) {
+		detune=args['d'];
+		detune.replace(/\D/g,''); // XSS zapping all non digits 
+		computePlaybackFactorsFromDetune();
+		}
+}
+
+function disableSliders(){
+	for (var i = 0; i < iNUMBERBANDS; ++i) $( "#s"+i ).slider( "option", "disabled", true );
+}
+
+function enableSliders(){
+	for (var i = 0; i < iNUMBERBANDS; ++i) $( "#s"+i ).slider( "option", "disabled", false );
+}
+
+function disableSlider(i){
+	$( "#s"+i ).slider( "option", "disabled", true );
+}
+
+function enableSlider(i){
+	$( "#s"+i ).slider( "option", "disabled", false );
+}
+
+function toggleCalibration() {
+	bCALIBRATE=!bCALIBRATE;
+	if (bCALIBRATE==1) {
+		enableSliders();
+		movedSlider=-99;
+		$("#caliBtn").html("3. Save Your Personal Curve");
+		}
+	else {
+		saveCurrentLevelsToCookie();
+		setAllLevels();
+		disableSliders();
+		$("#caliBtn").html("Done! (Click to recalibrate)");
+	}
+}
+
+function toggleModulation(bNoMsg) {
+	bANIMATE=!bANIMATE;
+	if (bANIMATE==1) {
+		savedLevel = currentLevel.slice(0); // copy values, not ref!
+		savedCurrentLevel = currentLevel.slice(0); // copy values, not ref!
+		nzSliderIndex=[];
+		mmMin=1;mmMax=0;
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			if (savedLevel[i]>0) {
+				if (savedLevel[i]<mmMin) mmMin=savedLevel[i];
+				if (savedLevel[i]>mmMax) mmMax=savedLevel[i];
+				nzSliderIndex.push(i);
+			}
+		}
+		disableSliders();
+		updateButtons();
+		modulationRandom();
+		}
+	else {
+		// currentLevel=savedLevel.slice(0); // copy values, not ref!
+		clearTimeout(modulationTimeout);
+		enableSliders();
+		updateButtons();
+		setCurrentLevelsToSliders();
+		randomCounter=0;
+		animationCtlReset();
+	}
+	 if (bNoMsg!=1) {
+	 if (bANIMATE==1) msg("Now animating the sliders for you...");
+	 else msg("Slider animation has been stopped");
+	 }
+}
+
+function stopModulation() {
+	if (bANIMATE==1) {
+	toggleModulation(1);
+	randomCounter=0;
+	}
+}
+
+function startModulation() {
+	randomCounter=0;
+	if (bANIMATE==0) {
+	toggleModulation(1);
+	randomCounter=0;
+	}
+}
+
+function modulationRandom(){
+
+		iCurrentAnimationSpeed=iINITIALANIMATIONSPEED/iAnimationFactor;
+
+		var nCycle=25; // number of steps between snapshots
+
+		if (randomCounter==0) {   // time to generate a new random state from the saved curve
+		
+			var ranSlider8=-1;
+			var count8=0;
+			var max8=0;
+		
+			if (iAnimationMode==8) {
+				    	for (var i = 0; i < iNUMBERBANDS; ++i) { 
+				    		if (savedLevel[i]==0) {count8++;}
+				    		else if (savedLevel[i]>max8) max8=savedLevel[i];
+				    	}
+				    	if (count8<2) { msg('This animation mode requires a couple of sliders set to zero');}
+				    	else {
+				    		while (ranSlider8<0){
+				    			var ran8=Math.floor(Math.random()*10);
+				    			if (savedLevel[ran8]==0) ranSlider8=ran8;
+				    		}
+				    	}
+				    	max8=Math.min(max8*1.15,0.99);
+				}
+
+			savedCurrentLevel = currentLevel.slice(0);  // save where we come from, copy values, not ref!
+			if (bNOWMOVING==0) {  // the former random method
+				for (var i = 0; i < iNUMBERBANDS; ++i) {
+					var smin,smax;
+				  	if (iAnimationMode==1) {smin=0.5;smax=1.25;}
+				  	if (iAnimationMode==2) {smin=0.8;smax=1.1;}
+				  	if (iAnimationMode==3) {smin=0;smax=1.5;}
+				    var ran=(smax-smin)*Math.random()+smin;
+				    if (iAnimationMode<4)  {randomLevel[i] = ran*savedLevel[i];}
+				    if (iAnimationMode==4) {if (savedLevel[i]>0) randomLevel[i]=Math.random()*(mmMax-mmMin)+mmMin; else randomLevel[i]=0;}
+				    if (iAnimationMode==5) {if (Math.random()>0.6) randomLevel[i]=0; else randomLevel[i]=savedLevel[i]; }
+				    if (iAnimationMode==6) {randomLevel[i]=savedLevel[Math.floor(Math.random()*10)]; }
+				    if (iAnimationMode==7) {if (savedLevel[i]>0) randomLevel[i]=savedLevel[nzSliderIndex[Math.floor(Math.random()*nzSliderIndex.length)]]; else randomLevel[i]=0;}
+				    if (iAnimationMode==8) {
+				    	if (i==ranSlider8) randomLevel[i]=max8;
+				    	else randomLevel[i]=savedLevel[i];
+				    	}
+				    if (randomLevel[i]>0.99) randomLevel[i]=0.99;
+				    } 
+				}
+			else {  // the new Now Moving method
+					if ((bNOWMOVINGUP==1)&&(++iNowMovingTo==3)) {iNowMovingTo=0;}
+					if ((bNOWMOVINGUP==0)&&(--iNowMovingTo==-1)) {iNowMovingTo=2;}
+					for (var i = 0; i < iNUMBERBANDS; ++i) {
+						randomLevel[i] = fMotionStates[iNowMovingTo][i];
+					}
+					displayMovingState();
+			}
+		}
+		
+		for (var i = 0; i < iNUMBERBANDS; ++i) currentLevel[i] = savedCurrentLevel[i]+randomCounter*(randomLevel[i]-savedCurrentLevel[i])/nCycle;
+
+		if ((randomCounter%5)==0) setCurrentLevelsToSliders();
+		else setAllLevels();	// update the levels without updating the sliders (saving javascript CPU)
+
+		if (++randomCounter==nCycle) randomCounter=0;
+		
+		clearTimeout(modulationTimeout);	
+		modulationTimeout = setTimeout(function(){modulationRandom();},iCurrentAnimationSpeed*1000/nCycle);
+}
+
+function startAnimationCtl(){
+	bNOWMOVING=1;
+	animationCtlReset();
+	customLinkAssign('nowMoving','playOff','Start','');
+	toggleModulation();
+}
+
+function animationCtlReset(){
+	bNOWMOVINGUP=1;
+	iNowMovingTo=-1;
+	customLinkAssign('01','playOff','&rarr;','');
+	customLinkAssign('12','playOff','&rarr;','');
+	customLinkAssign('23','playOff','&rarr;','');
+	customLinkAssign('32','playOff','&larr;','');
+	customLinkAssign('21','playOff','&larr;','');
+	customLinkAssign('nowMoving','actionlink','Start',startAnimationCtl);
+}
+
+function initStates(){
+	fMotionStates[0]=[0.5,0.46,0.42,0.38,0.34,0.3,0.27,0.24,0.21,0.18];
+	fMotionStates[1]=[0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3];
+	fMotionStates[2]=[0.18,0.21,0.24,0.27,0.3,0.34,0.38,0.42,0.46,0.5];
+}
+
+function assignState(s){
+	var state=["A","B","C"];
+	for (var i = 0; i < iNUMBERBANDS; ++i)  fMotionStates[s][i]=$( "#s"+i ).slider( "value" );
+	msg("...now assigned to Motion Snapshot "+state[s]);
+}
+
+function displayMovingState(){
+
+	customLinkAssign('01','playOff','&rarr;','');
+	customLinkAssign('12','playOff','&rarr;','');
+	customLinkAssign('23','playOff','&rarr;','');
+	customLinkAssign('13','playOff','&larr;','');
+	customLinkAssign('32','playOff','&larr;','');
+	customLinkAssign('21','playOff','&larr;','');
+
+if (bNOWMOVINGUP){
+		if (iNowMovingTo==0) {customLinkAssign('01','playOn','&rarr;','');}
+		if (iNowMovingTo==1) {customLinkAssign('12','playOn','&rarr;','');}
+		if (iNowMovingTo==2) {customLinkAssign('23','playOn','&rarr;','');}
+	}
+	else{
+		if (iNowMovingTo==2) {customLinkAssign('13','playOn','&larr;','');}
+		if (iNowMovingTo==1) {customLinkAssign('32','playOn','&larr;','');}
+		if (iNowMovingTo==0) {customLinkAssign('21','playOn','&larr;','');}
+	}
+	// change the direction with P[1/4]
+	if (Math.floor(Math.random()*4)==0) bNOWMOVINGUP=!bNOWMOVINGUP;
+}
+
+function saveRandomExchange(){                                   
+    savedLevel = currentLevel.slice(0);
+    randomLevel = currentLevel.slice(0);
+    msg("Animation data has been updated!");
+    randomCounter=0;
+}
+
+function toggleMute() {
+    var fadeSteps=37;
+    if (iTimer==0) fadeSteps=173;
+    iFadeState=0;
+	bMUTE=!bMUTE;
+	if (bMUTE==1) {
+		fadeOut(1,fadeSteps);
+		if (iMTimer>0) setMeditationBell(0);
+		updateButtons();
+		if (iTimer==0) msg("It's time to... slowly fade out... (and sleep)");
+		else  msg("Keeping quiet...");
+	}
+	else {
+		fadeOut(0,fadeSteps);
+		updateButtons();
+		if (iTimer==0) msg("It's time to... slowly fade in... (and wake up)");
+		else msg("");
+	}
+	if (iTimer==0) iTimer=-1;
+	updateDocumentLinks();
+}
+
+function forceMute(bTurnOn) {
+	if (bTurnOn) {
+		bMUTEsaved=bMUTE;
+		if (!bMUTE) toggleMute();
+		}
+	else {
+		if (!bMUTEsaved && bMUTE) toggleMute();
+	}
+	bMUTEFORCED=bTurnOn;
+}
+
+function startMuted(){bSTARTMUTED=1;}
+function returnMute() {return bMUTE;}
+
+function updateButtons() {
+	if (bMUTE==1) { 
+		activateButton(["mute"],1);
+		enableButton(["reset","anim","mode","speed","volDown","volUp","calib","bell"],0);
+		disableSliders();
+	}
+	else{
+		activateButton(["mute"],0);
+		enableButton(["reset","anim","mode","speed","volDown","volUp","calib","bell"],1);
+		if (bANIMATE==1) {
+			activateButton(["anim"],1);
+			audibleButton(["mode","speed"],1);
+		}
+		else {
+			enableButton(["reset"],1);
+			activateButton(["anim"],0);
+			audibleButton(["mode","speed"],0);
+			enableSliders();		}
+		}
+}
+
+function setTimer(time) {
+	if((typeof time === "undefined") || (isNaN(time))) {
+		var elapsed=((new Date).getTime()-epoch);
+		iTimer=Math.max(0,iTimer-elapsed/60000+2);
+		if (iTimer<1) {iTimer=1;msg("Timer set to 1 minute"); activateButton(["timer"],1);}
+			else if (iTimer<5) {iTimer=5;msg("Timer set to 5 minutes");}
+			else if (iTimer<10) {iTimer=10;msg("Timer set to 10 minutes");}
+			else if (iTimer<15) {iTimer=15;msg("Timer set to 15 minutes");}
+			else if (iTimer<20) {iTimer=20;msg("Timer set to 20 minutes");}
+			else if (iTimer<25) {iTimer=25;msg("Pomodoro time! (25 minutes) Keyboard Shortcut: o");}
+			else if (iTimer<30) {iTimer=30;msg("Timer set to 30 minutes");}
+			else if (iTimer<60) {iTimer=60;msg("Timer set to 1 hour");}
+			else if (iTimer<120) {iTimer=120;msg("Timer set to 2 hours");}
+			else if (iTimer<240) {iTimer=240;msg("Timer set to 4 hours");}
+			else if (iTimer<480) {iTimer=480;msg("Timer set to 8 hours");}
+			else {iTimer=-1;msg("Timer is disabled");activateButton(["timer"],0);};
+		}
+		else {
+			if (time==0) {iTimer=0;updateTimer();}
+			else {
+			iTimer=time;
+			msg("Timer set to "+time+" min");
+			}
+		}
+		URLtimer='&tm='+iTimer;
+		if (iTimer==-1) URLtimer='';
+		updateDocumentLinks();
+
+	if(document.getElementById('timerText') !== null) {
+		if (iTimer>0) document.getElementById('timerText').value = iTimer;
+		else document.getElementById('timerText').value = "";
+		document.getElementById('timerText').blur();
+	}
+	
+	epoch=(new Date).getTime(); //ms
+	clearTimeout(timerTimeout);	
+	timerTimeout = setTimeout(function(){updateTimer();},10000);
+
+}
+
+function updateTimer() {
+
+	if (iTimer<0) return;
+
+	var elapsed=((new Date).getTime()-epoch);
+	var remaining=iTimer*60-elapsed/1000; //s
+
+	if (remaining<=0) {
+		// disable all interface
+		   iTimer=0;
+		   activateButton(["timer"],0);
+		   toggleMute();
+		   if(document.getElementById('timerText') !== null) document.getElementById('timerText').value = "";
+		}
+	else {
+		if(document.getElementById('timerText') !== null) document.getElementById('timerText').value = Math.ceil(remaining/60);
+		clearTimeout(timerTimeout);	
+		timerTimeout = setTimeout(function(){updateTimer();},10000);
+	}
+}
+
+function setMeditationBell(time) {
+
+	playBell();
+	clearTimeout(meditationInterval);	
+
+	if(typeof time === "undefined"){
+		if (iMTimer<1) {iMTimer=1;time=1;activateButton(["bell"],1);}
+			else if (iMTimer<5) {iMTimer=5;time=5;}
+			else if (iMTimer<10) {iMTimer=10;time=10;}
+			else if (iMTimer<15) {iMTimer=15;time=15;}
+			else if (iMTimer<20) {iMTimer=20;time=20;}
+			else if (iMTimer<25) {iMTimer=25;time=25;}
+			else if (iMTimer<30) {iMTimer=30;time=30;}
+			else if (iMTimer<60) {iMTimer=60;time=60;}
+			else if (iMTimer<99999) {iMTimer=99999;time="5:60"}
+			else {iMTimer=-1;time=-1;activateButton(["bell"],0);};
+			}
+	// time is now defined
+			if (isNaN(time)) { // not numeric (random setting such as nn:mm)
+				time=time.replace("-", ":");
+				var parts = time.split(":");
+				if (parts.length==2) {
+					if (isNaN(parts[0])) return; if (isNaN(parts[1])) return;
+					var minTime=Math.min(parts[0],parts[1]);
+					var maxTime=Math.max(parts[0],parts[1]);
+					var nextBell=Math.round(minTime+Math.random()*(maxTime-minTime));
+					meditationInterval = setTimeout(function(){setMeditationBell(time)},nextBell*60000);
+					msg("Random Bells from "+minTime+" to "+maxTime+" min");
+					if(document.getElementById('bellText') !== null) document.getElementById('bellText').value = "R";
+				}
+			} 
+			else { // numeric
+				iMTimer=time;
+				if (iMTimer>0) { 
+					if (iMTimer==1) msg("Meditation Bell every minute");
+					else if (iMTimer==25) msg("Meditation Bell every 25 minutes (Pomodoro)");
+					else if (iMTimer==60) msg("Meditation Bell every hour");
+					else msg("Meditation Bell every "+time+" min");
+					
+					if(document.getElementById('bellText') !== null) document.getElementById('bellText').value = iMTimer;
+					}
+				else {
+					msg("Meditation Bell now disabled"); activateButton(["bell"],0)
+					if(document.getElementById('bellText') !== null) document.getElementById('bellText').value = "";
+				}
+				if (iMTimer>0) meditationInterval = setInterval(function(){playBell();},iMTimer*60000);
+			}
+			
+	URLbell='&bl='+encodeURIComponent(time);
+	if (time==-1) URLbell='';
+	updateDocumentLinks();
+			
+	if(document.getElementById('bellText') !== null) document.getElementById('bellText').blur();
+
+}
+
+function collectNZ() {
+	var userData={};
+	var cookieName='collected';
+	var tmp=readCookie(cookieName);
+	if (tmp!=null) userData=JSON.parse(tmp);
+	else {
+		userData['codes']=[];
+		userData['levels']=[];
+	}
+	for (var i = 0; i < iNUMBERBANDS; ++i) { 
+		if (currentLevel[i] >0) {
+				var urlParsed = sourceFileA[i].split("/");
+				userData['codes'].push(urlParsed[4]+urlParsed[5].substring(0,1));
+				userData['levels'].push(Math.round(currentLevel[i]*100));
+			} 
+	}
+	// trimming
+	while (userData['codes'].length>10) {
+		userData['codes'].shift();
+		userData['levels'].shift();
+	}
+	console.log("Custom Stack : ");
+	console.log(userData);
+	// saving
+	var days=36500;
+	createCookie(cookieName,JSON.stringify(userData),days);
+	msg("[Custom] Non-zero sliders have been collected ["+userData['codes'].length+"/10]");
+}
+
+
+function clearStack() {
+	var userData={};
+	var cookieName='collected';
+	var tmp=readCookie(cookieName);
+	userData['codes']=[];
+	userData['levels']=[];
+	var days=36500;
+	createCookie(cookieName,JSON.stringify(userData),days);
+	msg("[Custom] Stack is now cleared [0/10]");
+}
+
+
+function customGenLaunch() {
+	var url;
+	var userData={};
+	var cookieName='collected';
+	var tmp=readCookie(cookieName);
+	if (tmp!=null) userData=JSON.parse(tmp);
+	else {
+		userData['codes']=[];
+		userData['levels']=[];
+	}
+	if (userData['codes'].length<10) msg("[ERROR] Collect 10 individual sliders first! ("+userData['codes'].length+" collected)");
+	else
+	{ 
+		// sort stack
+		var userDataSorted={};
+		userDataSorted['codes']=[];
+		userDataSorted['levels']=[];
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			for (var j = 0; j < userData['codes'].length; ++j) {
+				if(userData['codes'][j].substr(-1)==i) {
+					userDataSorted['codes'].push(userData['codes'][j]);
+					userDataSorted['levels'].push(userData['levels'][j]);
+				}
+			}
+		}
+		// generate url
+		url="https://mynoise.net/NoiseMachines/custom.php?l="
+		for (var i = 0; i < iNUMBERBANDS; ++i) {
+			if (userDataSorted['levels'][i]<10) url+='0'+userDataSorted['levels'][i];
+			else url+=userDataSorted['levels'][i];
+			}
+			
+		url+='00&m=';
+		for (var i = 0; i < iNUMBERBANDS; ++i) url+=userDataSorted['codes'][i]+'~';
+		url = url.substring(0,url.length-1);
+		var title=window.prompt("[Custom] Your custom generator is almost ready! We are just a short title away...","A Short Title");
+		if (title == null || title == "") {
+			// User cancelled
+		} else {
+			url+='&title='+encodeURIComponent(titleCase(title.trim()));
+				window.open(url,"_self");
+		}
+	}
+}
+
+function titleCase(str) {
+   var splitStr = str.toLowerCase().split(' ');
+   for (var i = 0; i < splitStr.length; i++) splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+   return splitStr.join(' '); 
+}
+
+function help() {
+  var myWindow = window.open("help.php", "myNoise Help", "width=480,height=800");
+}
+
+function selectedSlidersAdd(s) {
+	if (selSliders[10]<2) {
+		if (selSliders[10]==0) selSliders=[0,0,0,0,0,0,0,0,0,0,1]; // selSliders[10]=currently adding stems flags
+		selSliders[s]=1-selSliders[s];
+		selectedSlidersDraw()
+	}
+	if (selSliders[10]==3) {  // Audio Fade
+		fAUDIOFADETIME=s;
+		msg("[Audio Fade] Confirmed "+fAUDIOFADETIME+"s");
+		selSliders[10]=1;
+	}
+	if (selSliders[10]==4) {  // Random Select
+		selSliders=[0,0,0,0,0,0,0,0,0,0,1];
+		selectedSlidersRandom(s);
+		var weight=0;
+		for (var i = 0; i < iNUMBERBANDS; ++i) { weight+=selSliders[i] };
+		selectedSlidersHighlight(0.45-0.015*weight);
+	}
+}
+
+function selectedSlidersReset() {
+	var weight=0;
+	for (var i = 0; i < iNUMBERBANDS; ++i) { weight+=selSliders[i] };
+	if (weight>1) selSliders=[0,0,0,0,0,0,0,0,0,0,1];
+	else selSliders=[1,1,1,1,1,1,1,1,1,1,1];
+	selectedSlidersDraw();
+}
+
+function selectedSlidersRandom(proba) {
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		if (Math.random()<(proba/10)) selSliders[i]=1;
+		else selSliders[i]=0;
+		}
+	selectedSlidersDraw();
+}
+
+function selectedSlidersHighlight(value) {
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		if (selSliders[i]) $("#s"+i).slider( "value", value );
+		else $("#s"+i).slider( "value", 0 );
+		}
+	selectedSlidersDraw();
+}
+
+function selectedSlidersFunction(type) {
+switch(type){
+	case 0: // invert
+		for (var i = 0; i < iNUMBERBANDS; ++i) selSliders[i]=1-selSliders[i];
+		break;
+	case 1: // invert
+		var sum=0;
+		for (var i = 0; i < iNUMBERBANDS; ++i) sum+=currentLevel[i];
+		sum/=10;
+		for (var i = 0; i < iNUMBERBANDS; ++i) { if (currentLevel[i]<sum) selSliders[i]=1; else selSliders[i]=0;}
+		break;
+	}
+	selSliders[10]=0;
+	selectedSlidersDraw();
+}
+
+function selectedSlidersDraw(){
+	for (var i = 0; i < iNUMBERBANDS; ++i) { 
+		if (selSliders[i]) {
+			$("#s"+i).removeClass("ui-slider-vertical_lowlight");
+			$("#s"+i).addClass("ui-slider-vertical");
+			}
+		else {
+			$("#s"+i).removeClass("ui-slider-vertical");
+			$("#s"+i).addClass("ui-slider-vertical_lowlight");
+		}
+	}
+}
+
+function selectedSlidersVolUp(offset) {
+	for (var i = 0; i < iNUMBERBANDS; ++i) { 
+		if (selSliders[i]) {
+					currentLevel[i]=Math.min(0.99,currentLevel[i]+offset);
+					savedLevel[i]=Math.min(0.99,savedLevel[i]+offset); randomCounter=0;  //anim
+					$( "#s"+i ).slider("value", currentLevel[i]);
+		}
+	}
+}
+
+function selectedSlidersVolDown(offset) {
+	for (var i = 0; i < iNUMBERBANDS; ++i) { 
+		if (selSliders[i]) {
+					currentLevel[i]=Math.max(0,currentLevel[i]-offset);
+					savedLevel[i]=Math.max(0,savedLevel[i]-offset); randomCounter=0;  //anim
+					$( "#s"+i ).slider("value", currentLevel[i]);
+		}
+	}
+}
+
+function selectedSlidersVolUpDown(offset) {
+	var weight=0;
+	for (var i = 0; i < iNUMBERBANDS; ++i) { weight+=selSliders[i] };
+	if (weight==0) { selectedSlidersRandom(5);for (var i = 0; i < iNUMBERBANDS; ++i) { weight+=selSliders[i] };}
+	if (weight==10) selectedSlidersVolUp(offset);
+	else {
+		var offsetUp=offset*5/weight;
+		var offsetDown=offset*5/(10-weight);
+		for (var i = 0; i < iNUMBERBANDS; ++i) { 
+			if (selSliders[i]) {
+					var value=Math.min($( "#s"+i).slider("option", "value")+offsetUp,1); 
+					$("#s"+i).slider( "value", value );
+					}
+			else {
+					var value=Math.max($( "#s"+i).slider("option", "value")-offsetDown,0); 
+					$("#s"+i).slider( "value", value );
+			}
+		}
+	}
+}
+
+function slidersUp(){ // mutiplicative to avoid stuck at zero
+	if (bMUTE==1) toggleMute();
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		currentLevel[i]=Math.min(0.99,currentLevel[i]*fLevelMultiplier);
+		savedLevel[i]=Math.min(0.99,savedLevel[i]*fLevelMultiplier); randomCounter=0;  //anim
+		$( "#s"+i ).slider("value", currentLevel[i]);
+		}
+}
+
+function slidersDown(){ // mutiplicative to avoid stuck at zero
+	if (bMUTE==1) toggleMute();
+	for (var i = 0; i < iNUMBERBANDS; ++i) {
+		currentLevel[i]=currentLevel[i]/fLevelMultiplier;
+		savedLevel[i]=savedLevel[i]/fLevelMultiplier; randomCounter=0; //anim
+		$( "#s"+i ).slider("value", currentLevel[i]);
+		}
+}
+
+function selectedSlidersZero(type){
+	if (type>0) {
+		for (var i = 0; i < iNUMBERBANDS; ++i) { if (selSliders[i]==1) $("#s"+i).slider( "value", 0 ); }
+		} else {
+		for (var i = 0; i < iNUMBERBANDS; ++i) { if (selSliders[i]==0) $("#s"+i).slider( "value", 0 ); }
+	}
+}
+
+function selectedSlidersShift(dir){
+	var tmp;
+	if (dir>0) {
+		tmp=selSliders[9];
+		for (var i = iNUMBERBANDS-1;i>0;--i) selSliders[i]=selSliders[i-1];
+		selSliders[0]=tmp;
+	} else {
+		tmp=selSliders[0];
+		for (var i = 0;i<iNUMBERBANDS-1;++i) selSliders[i]=selSliders[i+1];
+		selSliders[9]=tmp;
+	}
+	selectedSlidersDraw();
+}
+
+function experimentalAudioFadeMode() { msg("[Audio Fade] Enter time in sec. (0..9)"); selSliders[10]=3;}
+
+function ranNSliders() { msg("[Pick Sliders] Enter Proba (0..9)"); selSliders[10]=4;}
+
+// Keypresses
+
+Mousetrap.bind('m', function() { toggleMute(); });
+Mousetrap.bind('a', function() { toggleModulation(); });
+Mousetrap.bind('s', function() { $("#speed").click(); });
+Mousetrap.bind('d', function() { $("#mode").click(); });
+Mousetrap.bind('r', function() { $("#reset").click(); });
+Mousetrap.bind('k', function() { slidersUp(); });
+Mousetrap.bind('j', function() { slidersDown(); });
+Mousetrap.bind('t', function() { $("#timer").click(); });
+Mousetrap.bind('l', function() { $("#bell").click(); });
+Mousetrap.bind('h', function() { help(); });
+Mousetrap.bind('o', function() { setTimer(25);activateButton(["timer"],1);msg("Pomodoro timer set!");});
+Mousetrap.bind('shift+o', function()  { setMeditationBell(25);activateButton(["bell"],1);msg("Pomodoro bell set!");});
+Mousetrap.bind('w', function() { setPreset(0.18,0.21,0.24,0.27,0.3,0.34,0.38,0.42,0.46,0.5,"White"); });
+Mousetrap.bind('p', function() { setPreset(0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,"Pink"); });
+Mousetrap.bind('b', function() { setPreset(0.5,0.46,0.42,0.38,0.34,0.3,0.27,0.24,0.21,0.18,"Brown"); });
+Mousetrap.bind('z', function() { setPreset(0,0,0,0,0,0,0,0,0,0,"Zeroed"); });
+Mousetrap.bind('0', function() { selectedSlidersAdd(0);});
+Mousetrap.bind('1', function() { selectedSlidersAdd(1);});
+Mousetrap.bind('2', function() { selectedSlidersAdd(2);});
+Mousetrap.bind('3', function() { selectedSlidersAdd(3);});
+Mousetrap.bind('4', function() { selectedSlidersAdd(4);});
+Mousetrap.bind('5', function() { selectedSlidersAdd(5);});
+Mousetrap.bind('6', function() { selectedSlidersAdd(6);});
+Mousetrap.bind('7', function() { selectedSlidersAdd(7);});
+Mousetrap.bind('8', function() { selectedSlidersAdd(8);});
+Mousetrap.bind('9', function() { selectedSlidersAdd(9);});
+Mousetrap.bind('+', function() { selectedSlidersVolUp(0.06);selSliders[10]=0});
+Mousetrap.bind('-', function() { selectedSlidersVolDown(0.06);selSliders[10]=0});
+Mousetrap.bind('*', function() { selectedSlidersVolUpDown(0.03);selSliders[10]=0});
+Mousetrap.bind('/', function() { selectedSlidersFunction(0);});
+Mousetrap.bind('enter', function() { selectedSlidersReset();});
+Mousetrap.bind('=', function() { selectedSlidersFunction(1);});
+Mousetrap.bind('f', function() { experimentalAudioFadeMode();});
+Mousetrap.bind('ù', function() { experimentalPitchRandom();});
+Mousetrap.bind('%', function() { experimentalOSauto();});
+Mousetrap.bind('µ', function() { stemDrop(); });
+Mousetrap.bind('n', function() { ranNSliders();});
+Mousetrap.bind('del', function() { selectedSlidersZero(1);});
+Mousetrap.bind('@', function() { selectedSlidersZero(1);});
+Mousetrap.bind('shift+del', function() { selectedSlidersZero(-1);});
+Mousetrap.bind('#', function() { selectedSlidersZero(-1);});
+Mousetrap.bind('<', function() { selectedSlidersShift(1);});
+Mousetrap.bind('>', function() { selectedSlidersShift(-1);});
+Mousetrap.bind('g', function() { playAllSounds();setAllLevels();msg("Now Playing...");});
+Mousetrap.bind('y', function() { tune(432/440);msg("Experimental - Now tuned to A4=432Hz"); });
+Mousetrap.bind('?', function() { randomSettings(); });
+Mousetrap.bind('c', function() { collectNZ(); });
+Mousetrap.bind('shift+c', function() { customGenLaunch(); });
+Mousetrap.bind('x c', function() { clearStack(); });
+
+// favs
+var fData=new Array();
+
+var curGenCode="CUSTOM_CITYRAIN";
+
+function favorite(what){
+	addToFavorites(what);
+	refreshFavs();
+}
+
+function addToFavorites(what){
+	var ndx=fData.indexOf(what);
+	if (ndx==-1){
+		$('#f'+what).attr('src','/Pix/fav_b.png');
+		fData.push(what);
+	}
+	else { // is a favorite
+		$('#f'+what).attr('src','/Pix/fav.png');
+		fData.splice(ndx,1);
+	}
+	fCookieWrite();
+}
+
+function fCookieRead(){
+	var uids=readCookie('uIDS');
+	var cookieName='fSET_'+uids;
+	var tmp=readCookie(cookieName);
+	if (tmp!=null) fData=JSON.parse(tmp);
+}
+
+function fCookieWrite(){
+	var uids=readCookie('uIDS');
+	var cookieName='fSET_'+uids;
+	var days=36500;
+	createCookie(cookieName,JSON.stringify(fData),days);
+}
+
+function highlightFavs(){
+	$('.iFV').css('display', 'inline');
+	$('.iFV').prop('title', 'Your favorites');
+	$('.iFV').data('powertip','Your favorites');
+	$('.iFV').css( 'cursor', 'pointer' );
+	fCookieRead();
+	for (var i in fData) {
+  		$('#f'+fData[i]).attr('src','/Pix/fav_b.png');
+	}
+}
+
+function toggleFavs(){
+	if (!highlighted.localeCompare('favs')) { highlighted='none'; $('.hint').parent('span').show();}
+	else { highlighted='favs'; $('.hint').parent('span').hide();}
+	refreshFavs();
+
+}
+
+function refreshFavs(){
+	if (!highlighted.localeCompare('favs')) {
+		$('.DIM').css('opacity', '0.3');
+		$('#iFV').attr('src','/Pix/fav_b.png');
+		for (var i in fData) {
+			$('.'+fData[i]).css('opacity', '1');
+			$('.'+fData[i]).parent('span').show();
+		}
+  	}
+  	else { $('.DIM').css('opacity', '1'); $('#iFV').attr('src','/Pix/fav_l.png');}
+}
+
+function checkFavGen(){
+	fCookieRead();
+	var ndx=fData.indexOf(curGenCode);
+	if (ndx>-1) $('#f'+fData[ndx]).attr('src','/Pix/fav_b.png');
+	$('#f'+curGenCode).css('display', 'inline');
+	$('#f'+curGenCode).prop('title', 'Favorite');
+	$('#f'+curGenCode).data('powertip','Favorite');
+	$('#f'+curGenCode).css( 'cursor', 'pointer' );
+	$('#f'+curGenCode).powerTip();
+}
+
+function addGenToFavs(){
+	addToFavorites(curGenCode);
+}
+	</script><script>
+  $(function() {
+    $( "#s0, #s1, #s2, #s3, #s4, #s5, #s6, #s7, #s8, #s9" ).slider({
+      orientation: "vertical",
+      range: "min",
+	  min: 0,
+      max: 0.99,
+      value: 0.3,
+      step:0.01,
+      animate: "slow",
+      slide: function( event, ui ) {sliderChange(event.target.id)},
+      change: function( event, ui ) {sliderChange(event.target.id)}
+    });
+  });
+</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-39869439-1', 'mynoise.net');
+  ga('send', 'pageview');
+
+</script>
 </head>
-<body>
 
-<h1>Soundscapes.</h1>
-<p>Click any button to demo.</p>
+<script type="text/javascript">
+		$(function() {
+			$('.actionlink,.blue,.powertip').powerTip({placement: 'nw'});
+			$('#reset,#anim,#speed,#mode,#volDown,#volUp,#mute,#timer').powerTip({placement: 'n'});
+			$('#s0,#s1,#s2,#s3,#s4,#s5,#s6,#s7,#s8,#s9').powerTip({placement: 'n', mouseOnToPopup: true, offset: 20});
+			$('.powertipS').powerTip({placement: 's'});
+		});
+</script>
 
-    <form>
-        <button id="button-loop-1" type="button" value="1">Rain</button>
-        <button id="button-loop-2" type="button" value="2">Drip</button>
-    </form>
-	
-	<p><input type="range" min="0" max="100" value="100" oninput="audio.changeVolume(this);"> Volume</p>
+<script>
+function createCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length).replace(/%2C/g,",");  // if cookie has been set from the cloud, the %2C needs to be replaced by a comma;
+	}
+	return null;
+}
+
+function eraseCookie(name) {
+	createCookie(name,"",-1);
+}
+</script>
+<body onload="init()">
 
 
-    <script>
-    //--------------
-    // Audio Object
-    //--------------
-    var audio = {
-        buffer: {},
-        compatibility: {},
-        files: [
-            'rain.wav',
-            'drip.wav'
-        ],
-        proceed: true,
-        source_loop: {},
-        source_once: {}
-    };
+<!-- begin #container -->
+<div id="container"> 
 
-    //-----------------
-    // Audio Functions
-    //-----------------
-    audio.findSync = function(n) {
-        var first = 0,
-            current = 0,
-            offset = 0;
-
-        // Find the audio source with the earliest startTime to sync all others to
-        for (var i in audio.source_loop) {
-            current = audio.source_loop[i]._startTime;
-            if (current > 0) {
-                if (current < first || first === 0) {
-                    first = current;
-                }
-            }
-        }
-
-        if (audio.context.currentTime > first) {
-            offset = (audio.context.currentTime - first) % audio.buffer[n].duration;
-        }
-
-        return offset;
-    };
-	
-	audio.changeVolume = function(element) {
-				this.gainNode = audio.context.createGain();
-				audio.source_loop = audio.context.createBufferSource();
-				audio.source_loop.connect(audio.context.destination);
-				audio.source_loop.connect(this.gainNode);
-				this.gainNode.connect(audio.context.destination);
-				var volume = element.value;
-				var fraction = parseInt(element.value) / parseInt(element.max);
-			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
-			  // sound as good.
-				this.gainNode.gain.value = fraction * fraction;
-				}; 
-	
-
-    audio.play = function(n) {
+<div class="noiseTitle">
 		
-        if (audio.source_loop[n]._playing) {
-            audio.stop(n);
-        } else {
-            audio.source_loop[n] = audio.context.createBufferSource();
-            audio.source_loop[n].buffer = audio.buffer[n];
-            audio.source_loop[n].loop = true;
-            audio.source_loop[n].connect(audio.context.destination);
+		<div class="bigTitle">
+			Rain in the City		</div>
+		<div class="subTitle">Urban Rain & Cafe Ambience</div>
+</div><div id="lilBoxL">
 
-            var offset = audio.findSync(n);
-            audio.source_loop[n]._startTime = audio.context.currentTime;
+	<div class="LfixedImg zero hide"><a href='/'><img src='/Pix/icon_logo.png' alt='Logo' height='28px'></a></div>
 
-            if (audio.compatibility.start === 'noteOn') {
-                /*
-                The depreciated noteOn() function does not support offsets.
-                Compensate by using noteGrainOn() with an offset to play once and then schedule a noteOn() call to loop after that.
-                */
-                audio.source_once[n] = audio.context.createBufferSource();
-                audio.source_once[n].buffer = audio.buffer[n];
-                audio.source_once[n].connect(audio.context.destination);
-                audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
-                /*
-                Note about the third parameter of noteGrainOn().
-                If your sound is 10 seconds long, your offset 5 and duration 5 then you'll get what you expect.
-                If your sound is 10 seconds long, your offset 5 and duration 10 then the sound will play from the start instead of the offset.
-                */
+	<div class="Lslide two hide">
+	<div class="LslideImg"><img src='/Pix/icon_social.png' alt='Social' height="25px"></div>
+	<div class="LslideText">
+	Follow myNoise on<br><a href='https://www.facebook.com/mynoise.net/'>Facebook</a> • <a href='https://twitter.com/audiosampling'>Twitter</a> • <a href="https://goo.gl/rQ85ZC">YouTube</a>
+	</div>
+	</div>
+	
+	<div class="Lslide three  hide">
+	<div class="LslideImg"><a href='/sitemap.php'><img src='/Pix/icon_map.png' alt='Sitemap' height='25px'></a></div>
+	<div class="LslideText">Feeling adventurous... or lost?<br>Use the <a href='/sitemap.php'>Site Map</a>
+	</div>
+	</div>
+	
+	<div class="Lslide four hide">
+	<div class="LslideImg" id="blogImg"></div>
+	<div class="LslideText">Discover my <a href='/blog.php'>blog</a> and my <a href='/SamplingSessions/index.php'>sampling sessions photo albums</a>
+	</div>
+	</div>
+	
+	<div class="Lslide long hide" id="lsidelong">
+	<div class="LslideImg" id="bubbleImg"></div>
+	<div class="LslideText"><span class="lowlight">July 12th &bull;</span> <a href="https://mynoise.net/NoiseMachines/medievalMinstrelSoundscapeGenerator.php">Sad Minstrel</a> added
+<br><br>
+<span class="lowlight">June 30th &bull;</span> <a href="https://mynoise.net/NoiseMachines/fadingMemoriesSoundscapeGenerator.php">Fading Memories</a> added
+<br><br>
+<span class="lowlight">June 26th &bull;</span> <a href="https://mynoise.net/albums.php">Livescapes 1/2/3</a> released
+<br><br>
+<span class="lowlight">June 23rd &bull;</span> <a href="https://mynoise.net/NoiseMachines/africanPolyrhythmTranceGenerator.php">African Trance</a> added
+<br><br>
+<span class="lowlight">June 15th &bull;</span> <a href="https://mynoise.net/NoiseMachines/customMedievalLibrary.php">Medieval Library</a> added
+<br><br>
+<span class="lowlight">June 9th &bull;</span> <a href="https://mynoise.net/NoiseMachines/hauntedHouseSoundGenerator.php?l=64448952000053645470&m=&d=0">Old Mansion</a> added
+<br><br>
+<span class="lowlight">June 2nd &bull;</span> <a href="https://mynoise.net/NoiseMachines/rainforestNoiseGenerator.php">Rainforest</a> updated
+<br><br>
+<span class="lowlight">May 25th &bull;</span> <a href="https://mynoise.net/NoiseMachines/modernSpaceshipNoiseGenerator.php">Modern Spaceship</a> added
+<br><br>
+<span class="lowlight">May 18th &bull;</span> <a href="https://mynoise.net/NoiseMachines/customGenesis.php">Cosmic Expansion</a> added
+<br><br>
+<span class="lowlight">May 12th &bull;</span> <a href="https://mynoise.net/NoiseMachines/mooseForestSoundscapeGenerator.php">Northern Woodland</a> added
 
-                // Now queue up our looping sound to start immediatly after the source_once audio plays.
-                audio.source_loop[n][audio.compatibility.start](audio.context.currentTime + (audio.buffer[n].duration - offset));
-            } else {
-                audio.source_loop[n][audio.compatibility.start](0, offset);
-            }
+	</div>
+	</div>
+</div>
+	
+<div id="lilBoxR">
 
-            audio.source_loop[n]._playing = true;
-        }
-    };
+	<div id="carbonDiv" class="Rslide one hide">
+	<div class="RslideImg"><a href='/carbonFootprintCompensation.php'><img src='/Pix/icon_eco_new.png' alt='Carbon Footprint' height='25px'></a></div>
+	<div id="carbonText" class="RslideText">myNoise offsets its entire carbon footprint. <a href='/carbonFootprintCompensation.php'>Read more about it.</a>
+	</div>
+	</div>
+	
+	<div class="Rslide two hide">
+	<div class="RslideImg">
+	<a href='/login.php'><img src='/Pix/icon_login.png' alt='Login' height='25px'>	</a></div>
+	<div class="RslideText">
+	Patrons, <a href='/login.php'>log in here</a> to access the bonus features.	</div>
+	</div>
+	
+	<div class="Rslide three hide">
+	<div class="RslideImg">
+	<a href='/donate.php'><img src='/Pix/icon_pig.png' alt='Piggy Bank' height='25px'>	</a></div>
+	<div class="RslideText">
+	Help keep this website running without ads, with <a href='/donate.php'>a donation</a>	</div>
+	</div>
+	
+	<div class="Rslide four hide">
+	<div class="RslideImg"><a href='/albums.php'><img src='/Pix/icon_albums.png' alt='Audio Albums' height='25px'></a></div>
+	<div class="RslideText"><a href='/albums.php'>Audio albums</a> available on <a href='https://open.spotify.com/artist/1gRJBUyCeihBrgcCtDdEfv'>Spotify</a> • <a href="https://geo.itunes.apple.com/us/artist/mynoise/id893469126?mt=1&app=music&ls=1" target="itunes_store">iTunes</a> • <a href="http://www.amazon.com/s/?_encoding=UTF8&camp=1789&creative=390957&field-keywords=myNoise&index=digital-music&linkCode=ur2&search-type=ss&tag=audiocheck-20&linkId=H3I6KWU3OMBLZG2U">Amazon</a> • <a href="http://play.google.com/store/music/artist/myNoise?id=Akjtlzdbbchqsx4ivl4ru55fpiu&hl=en">Google Play</a> • ...
+	</div>
+	</div>
+	
+	<div class="Rslide five hide">
+	<div class="RslideImg"><a href='/screencasts.php'><img src='/Pix/icon_television.png' alt='mic' height='25px'></a></div>
+	<div class="RslideText">Learn how to use myNoise<br>with our <a href='/screencasts.php'>Video Tutorials</a>
+	</div>
+	</div>
+	
+	<div class="Rslide six hide">
+	<div class="RslideImg"><a href='https://amzn.to/2NOtn9h'><img src='/Pix/icon_amazon.png' alt='Amazon' height='25px'></a></div>
+	<div class="RslideText"><a href="https://www.amazon.com/dp/B07PQ33HV6"> Alexa, open myNoise</a>
+	• <a href="/recommendations.php">Products Recommendations</a>
+	</div>
+	</div>
+	
+	<div class="Rslide seven hide">
+	<div class="RslideImg"><a href='https://itunes.apple.com/be/app/mynoise/id813099896?mt=8'><img src='/Pix/icon_apple.png' alt='Apple Store' height='25px'></a></div>
+	<div class="RslideText"><a href='https://itunes.apple.com/be/app/mynoise/id813099896?mt=8'>Download the free myNoise Player</a> for iOS on the <a href='https://itunes.apple.com/be/app/mynoise/id813099896?mt=8'>Apple Store</a>
+	</div>
+	</div>
+	
+	<div class="Rslide eight hide">
+	<div class="RslideImg"><a href='https://play.google.com/store/apps/details?id=com.mynoise.mynoise&hl=en'><img src='/Pix/icon_droid.png' alt='Google Play' height='25px'></a></div>
+	<div class="RslideText"><a href='https://play.google.com/store/apps/details?id=com.mynoise.mynoise&hl=en'>Download the free myNoise Player</a> for Android on <a href='https://play.google.com/store/apps/details?id=com.mynoise.mynoise&hl=en'>Google Play</a>
+	</div>
+	</div>
+	
 
-    audio.stop = function(n) {
-        if (audio.source_loop[n]._playing) {
-            audio.source_loop[n][audio.compatibility.stop](0);
-            audio.source_loop[n]._playing = false;
-            audio.source_loop[n]._startTime = 0;
-            if (audio.compatibility.start === 'noteOn') {
-                audio.source_once[n][audio.compatibility.stop](0);
-            }
-        }
-    };
+</div>
 
-    //-----------------------------
-    // Check Web Audio API Support
-    //-----------------------------
-    try {
-        // More info at http://caniuse.com/#feat=audio-api
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        audio.context = new window.AudioContext();
-    } catch(e) {
-        audio.proceed = false;
-        alert('Web Audio API not supported in this browser.');
-    }
+<script>
+		$.get("/getBubbleSize.php", function(contents) {
+			var s=readCookie("bubble");
+			if (!s || !(s==contents)) {$('#bubbleImg').html("<img src='/Pix/icon_whatsnew_new.png' alt=new' height='25px'>");}
+			else {$('#bubbleImg').html("<img src='/Pix/icon_whatsnew.png' alt='new' height='25px'>");}
+			$('#lsidelong').hover(function(){createCookie("bubble",contents,365);});
+		});
+		$.get("/getBlogSize.php", function(contents) {
+			var s=readCookie("blog");
+			if (!s || !(s==contents)) {$('#blogImg').html("<a href='/blog.php'><img src='/Pix/icon_blog_new.png' alt='blog' height='25px'></a>");}
+			else {$('#blogImg').html("<a href='/blog.php'><img src='/Pix/icon_blog.png' alt='blog' height='25px'></a>");}
+		});
+</script>
 
-    if (audio.proceed) {
-        //---------------
-        // Compatibility
-        //---------------
-        (function() {
-            var start = 'start',
-                stop = 'stop',
-                buffer = audio.context.createBufferSource();
+<div class="menuNew">
+	<ul>
+		<li  class="powertipN" title="Why myNoise sounds different from other noise machines."><a href="/preface.php">Intro</a></li>
+		<li  class="powertipN" title="A selection of our best sounds, and their associated use"><a href="/howToUseSoundMachines.php">Uses</a></li>
+		<li id="active" class="powertipN" title="Our main page, listing all the sounds available to you, online and for free."><a href="/noiseMachines.php">• Online Noises •</a></li>
+		<li  class="powertipN" title="Frequently Asked Questions"><a href="/about.php">FAQ</a></li>
+		<li 
+		class="powertipN" title="I need your help to keep myNoise running."><a href="/donate.php">Donate</a>		</li>
 
-            if (typeof buffer.start !== 'function') {
-                start = 'noteOn';
-            }
-            audio.compatibility.start = start;
-
-            if (typeof buffer.stop !== 'function') {
-                stop = 'noteOff';
-            }
-            audio.compatibility.stop = stop;
-        })();
-
-        //-------------------------------
-        // Setup Audio Files and Buttons
-        //-------------------------------
-        for (var a in audio.files) {
-            (function() {
-                var i = parseInt(a) + 1;
-                var req = new XMLHttpRequest();
-                req.open('GET', audio.files[i - 1], true); // array starts with 0 hence the -1
-                req.responseType = 'arraybuffer';
-                req.onload = function() {
-                    audio.context.decodeAudioData(
-                        req.response,
-                        function(buffer) {
-                            audio.buffer[i] = buffer;
-                            audio.source_loop[i] = {};
-                            var button = document.getElementById('button-loop-' + i);
-                            button.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                audio.play(this.value);
-                            });
-                        },
-                        function() {
-                            console.log('Error decoding audio "' + audio.files[i - 1] + '".');
-                        }
-                    );
-                };
-                req.send();
-            })();
-        }
+	</ul>
+</div>
+<!--Amazon One Link
+<div id="amzn-assoc-ad-e40d75ed-036d-443d-8522-7db3d0c10cae"></div><script async src="//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=e40d75ed-036d-443d-8522-7db3d0c10cae"></script>
+--><div class="bgcontainer" id="bgcontainer"><div id="bgimage"></div></div>
+	
+<script>
+	$('#bgimage').css("background-image", "url(/Data/CUSTOM_CITYRAIN/bg.jpg)");
+	$('#bgimage').css({'opacity':  0});
+	$('#bgimage').fadeTo(4000,1);
+	
+	window.onscroll=function(){
+		if (window.scrollY>380) {$('#menu').addClass('menufixed');}
+			else {$('#menu').removeClass('menufixed');}
+		var parallax = document.getElementById('bgcontainer');
+		parallax.style.webkitTransform = 'translate3d(0px,' + (window.scrollY/2) + 'px, 0px)';
+		parallax.style.transform = 'translate3d(0px,' + (window.scrollY/2) + 'px, 0px)';
+		}
 		
-    }
-    </script>
+</script>
+
+	<div class="player">
+
+		<div class="calGrid" id="calGrid"></div>
+		<div class="contextPlay"><img src="/Pix/playButtonShadow.png" width="128px" height="128px" alt="Play" role="button"></div>
+	
+		<div class="mixer">
+			<div id="s0" title="African Wildlife 0" aria-label="African Wildlife 0" role="slider"></div>
+			<div id="s1" title="From India 0" aria-label="From India 0" role="slider"></div>
+			<div id="s2" title="Suburb 2" aria-label="Suburb 2" role="slider"></div>
+			<div id="s3" title="GT Masters 3" aria-label="GT Masters 3" role="slider"></div>
+			<div id="s4" title="Car Interior 4" aria-label="Car Interior 4" role="slider"></div>
+			<div id="s5" title="Car Interior 5" aria-label="Car Interior 5" role="slider"></div>
+			<div id="s6" title="Distant Thunder 6" aria-label="Distant Thunder 6" role="slider"></div>
+			<div id="s7" title="Cafe Restaurant 7" aria-label="Cafe Restaurant 7" role="slider"></div>
+			<div id="s8" title="Distant Thunder 8" aria-label="Distant Thunder 8" role="slider"></div>
+			<div id="s9" title="Distant Thunder 9" aria-label="Distant Thunder 9" role="slider"></div>
+		</div>
+		
+ 
+
+		<div class="controlers">
+	
+	        <div class="btn"><img src="/Pix/icon_reset.png" id="reset" class="btnImg" onclick="resetSliders()" onmouseover="msg('Type [H] for Help')" alt="Reset Sliders" title="Reset sliders [R]" role="button"></div>
+	        <div class="btn"><img src="/Pix/icon_animate.png" id="anim" class="btnImg" onclick="toggleModulation()" onmouseover="msg('Type [H] for Help')" alt="Slider Animation" title="Slider Animation [A]" role="button"></div>
+	        <div class="btn"><img src="/Pix/icon_mode.png" id="mode" class="btnImg sub" onclick="setAnimationMode()" onmouseover="msg('Type [H] for Help')" alt="Animation Mode" title="Slider Animation Mode [D]" role="button"><div id="modeText" class="btnCaption"></div></div>
+	        <div class="btn"><img src="/Pix/icon_speed.png" id="speed" class="btnImg sub" onclick="setAnimationSpeed()" onmouseover="msg('Type [H] for Help')" alt="Animation Speed" title="Slider Animation Speed [S]" role="button"><div id="speedText" class="btnCaption"></div></div>
+	        <div class="btn"><img src="/Pix/icon_volDown.png" id="volDown" class="btnImg" onclick="slidersDown()" onmouseover="msg('Type [H] for Help')" alt="Volume Down" title="Decrease levels [J]" role="button"></div>
+	        <div class="btn"><img src="/Pix/icon_volUp.png" id="volUp" class="btnImg" onclick="slidersUp()" onmouseover="msg('Type [H] for Help')" alt="Volume Up" title="Increase levels [K]" role="button"></div>
+	        <div class="btn"><img src="/Pix/icon_mute.png" id="mute" class="btnImg" onclick="toggleMute();" onmouseover="msg('Type [H] for Help')" alt="Mute" title="Mute [M]" role="button"></div>
+	        <div class="btn"><img src="/Pix/icon_bell.png" id="bell" class="btnImg" onclick="setMeditationBell()" onmouseover="msg('Type [H] for Help')" alt="Meditation Bell" title="Meditation Bell [L]" role="button">
+	        <input type="text" id="bellText" onfocus="this.value=''" onkeydown="if(event.keyCode==13) setMeditationBell(this.value);" class="btnInput" maxlength="5" size="3"></div>
+	        <div class="btn"><img src="/Pix/icon_timer.png" id="timer" class="btnImg" onclick="setTimer()" onmouseover="msg('Type [H] for Help')" alt="Timer" title="Timer [T]" role="button"><input type="text" id="timerText" onfocus="this.value=''" onkeydown="if(event.keyCode==13) setTimer(this.value);" class="btnInput" maxlength="3" size="3"></div>
+		</div>
+		
+	
+		<div class="msg" id="msg"></div>
+	
+	</div>
+<!-- begin FULL INTERFACE -->
+ <div class="allContent">
+
+
+    <div class="col1">
+	<div class="content">
+		<h1>Urban Perspective</h1>
+		<p>You are new to this grey city as you have just accepted a new position. Coming home from your first day of work it is raining, again! The day is ending just as it began - miserably. Was it that bad weather that forced you to seek shelter in a cafe? Or was it the irresistible smell of hot roasted coffee that invited you in... Is the cup half full? Half empty? It's introspection time. Perhaps things aren't as bad as they seem.
+		</p>
+        </div>
+
+    <div class="content">	<h1>Usage</h1>
+	<p>Each slider controls a particular audio stream; adjust sliders to taste and mood. The animation button <img src="/Pix/icon_animate.png" height="16px" width="16px"> turns the soundscape into an slowly evolving texture. Use this feature if you intend to listen to the generator over a long period of time!</p>
+
+</div>
+    	
+    <div class="content">
+		<h1>Testimonials <span class="titlesmall"> - write yours <a id="customURL1" href="/" target="_blank">here</a></span></h1>
+<p>Click the blue hearts to load their associated settings</p>		<div class="scroll-pane"><p><span class='actionlink' onclick='setPreset(0.52,0.28,0.22,0.31,0.35,0.30,0.31,0.19,0.37,0.50);'>&hearts;</span>&nbsp;<span class='hand'>
+This generator and car interior are my absolute favorites! They are so pleasing to listen to, as I used to live somewhere dry where it hardly rained. When it rained I was so overjoyed so hearing the sound of the rain is always special to me. Thank you so much for creating beautiful generators! </span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.44,0.14,0.0,0.0,0.6,0.19,0.57,0.34,0.39,0.61);'>&hearts;</span>&nbsp;<span class='hand'>
+Wonderful to listen to while reading a book, It helps me focus and feel comfortable .</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.43,0.25,0.39,0.28,0.37,0.20,0.44,0.31,0.35,0.41);'>&hearts;</span>&nbsp;<span class='hand'>
+This sound is so calming. It makes me feel at peace <3</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.52,0.28,0.22,0.31,0.35,0.30,0.31,0.19,0.37,0.50);'>&hearts;</span>&nbsp;<span class='hand'>
+I’ve always loved the sounds of the city, and this reminds me of late nights in New York when I visited a few years ago. It’s very calming, soothing, and it helps me get my work done. Thank you so much for this! <3 - Jazz</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.70,0.39,0.31,0.31,0.0,0.0,0.0,0.0,0.0,0.0);'>&hearts;</span>&nbsp;<span class='hand'>
+The &quot;Indian City&quot; setting transports me to another country. It makes me feel as though I've achieved my dream of traveling abroad and am now resting after a long journey to enjoy some coffee before exploring the city. It makes me feel both relaxed and excited at the same time, while also blocking out any annoying environmental noises. </span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.43,0.14,0.33,0.28,0.28,0.29,0.42,0.41,0.31,0.48);'>&hearts;</span>&nbsp;<span class='hand'>
+I have sleeping issues and live on a very quiet road. The sounds of cars passing by and a small bustling cafe makes me feel happy and safe, not alone.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.0,0.0,0.26,0.35,0.0,0.20,0.65,0.39,0.41,0.50);'>&hearts;</span>&nbsp;<span class='hand'>
+With these settings I am no longer studying for my degree in a dingy student house, I am on a balcony that lies above a cafe in London. 
+With my blanket wrapped around me, I sip my hot chocolate and listen to the sounds of a thunderstorm approach meld with the latest gossip bubbling up from beneath my balcony, reminding me that I am not alone to be awake in the early hours of the morning. </span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.64,0.14,0.31,0.38,0.33,0.32,0.29,0.25,0.23,0.38);'>&hearts;</span>&nbsp;<span class='hand'>
+This is now my new favorite. I can literally feel the coldness of the rain, picturing Im sitting outside of a cafe. </span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.25,0.30,0.24,0.0,0.36,0.57,0.36,0.29,0.38,0.44);'>&hearts;</span>&nbsp;<span class='hand'>
+This is my sound blocking soulmate ~ I've been looking for something like this for so long. Quiet chatter, roads that have been rained on, and a general busy small town feel. I love it. I live up north and the Autumns that we have here are short, but they *just* started, and it sounds and feels just like this. Rainy and busy. This will help me focus while I'm writing my book, for sure.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.0,0.0,0.43,0.0,0.17,0.35,0.36,0.38,0.53,0.57);'>&hearts;</span>&nbsp;<span class='hand'>
+I can picture myself walking on the sidewalk, the grey clouds and the rain won't stop me. In fact, I'm enjoying every steps. Cars passing me by, God knows what's on their mind.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.34,0.0,0.50,0.0,0.45,0.29,0.49,0.0,0.34,0.47);'>&hearts;</span>&nbsp;<span class='hand'>
+It's just going through traffic in the rain that does it for me. All alone. But at least the car is warm and dry.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.45,0.27,0.35,0.33,0.33,0.45,0.33,0.28,0.33,0.33);'>&hearts;</span>&nbsp;<span class='hand'>
+Wonderful, now I can feel like I’m in NYC whenever I want to.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.19,0.33,0.32,0.16,0.26,0.35,0.19,0.42,0.52,0.53);'>&hearts;</span>&nbsp;<span class='hand'>
+This is the sound of Saigon during its rainy season.  The rains are heavy every afternoon but they only last about an hour, so everyone who can pulls their motorbike onto the sidewalk and pops into a crowded café or small noodle shop to wait out the rain.  This is what it sounds like to wait at a table facing the street, the air filled with the heady scents of fresh herbs and nước mấm.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.51,0.17,0.31,0.22,0.36,0.38,0.35,0.34,0.47,0.22);'>&hearts;</span>&nbsp;<span class='hand'>
+YES! City sounds <3 Thank you.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.39,0.39,0.23,0.23,0.30,0.30,0.22,0.39,0.39,0.52);'>&hearts;</span>&nbsp;<span class='hand'>
+This is what it would be like on the balcony of a busy café during a storm. You can hear both the rain and the people inside, peppered over with the occasional car honk. Thunder isn't present here; all you can hear is the constant pitter-patter of raindrops and the customers/waiters in the restaurant.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.45,0.17,0.27,0.36,0.36,0.36,0.36,0.36,0.36,0.36);'>&hearts;</span>&nbsp;<span class='hand'>
+This is exactly what downtown Seattle sounds like during a thunderstorm... which is exactly what I needed for my writing.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.50,0.30,0.20,0.25,0.32,0.28,0.35,0.38,0.32,0.48);'>&hearts;</span>&nbsp;<span class='hand'>
+Cool vibe! I can picture the scene in my head...</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.50,0.42,0.31,0.36,0.42,0.28,0.30,0.32,0.28,0.23);'>&hearts;</span>&nbsp;<span class='hand'>
+I'm a sound engineer. I've been making records for most of my career and damaged my ears with loud listening levels and have a the ringing in the ears Tinnitus. This Noise  listening is a marvel ! I use it on my cell phone next to my head at night and I go straight off to sleep for hours on end! Simaen Skolfield</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.59,0.17,0.25,0.34,0.34,0.34,0.34,0.34,0.34,0.34);'>&hearts;</span>&nbsp;<span class='hand'>
+My new favourite office chitchat noiseblocker! I had been combining Distant Thunder with Cafe Restaurant in my own Stack but this is even better.  Thanks so much :) </span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.47,0.27,0.20,0.41,0.42,0.25,0.40,0.35,0.19,0.42);'>&hearts;</span>&nbsp;<span class='hand'>
+I'm supre noise sensitive, this site is so fascinating to be able to control the finest points of my listening sensitivity for that particular day.  I love this cafe one, but if I was in the cafe, it would probably be making me crazy but I'm doing mindless work,  so I'm appreciating the sounds MORE than if I was actually there trying to think.  Thanks Stephane.  </span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.59,0.17,0.25,0.34,0.34,0.34,0.34,0.34,0.34,0.34);'>&hearts;</span>&nbsp;<span class='hand'>
+So plain, yet so dynamic. I love it. Reminds me of New York.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.37,0.28,0.43,0.27,0.29,0.29,0.32,0.45,0.36,0.38);'>&hearts;</span>&nbsp;<span class='hand'>
+Been hoping for a good city soundscape, just makes for some really good background noise.</span><br><br>
+
+<span class='actionlink' onclick='setPreset(0.59,0.17,0.25,0.34,0.34,0.34,0.34,0.34,0.34,0.34);'>&hearts;</span>&nbsp;<span class='hand'>
+Great <3</span><br><br>
+
+</p></div>
+    </div>
+    
+	</div>
+	
+
+    <div class="col2">
+    <div class="contentText"><h1>Current Slider Settings</h1>
+<p>
+<a id="customURL0" href="" class="blue" role="button" title="Embed the current slider settings into the URL, for easy bookmarking and sharing... or for creating SuperGens.">Save in URL</a> 
+<br> 
+<span class="actionlink" role="button" onclick="saveCurrentLevelsToCookie('CUSTOM_CITYRAIN');" title="Save current slider settings as a browser cookie.">Save as Cookie</span>
+<span class="actionlink" role="button" onclick="loadCurrentLevelsFromCookieAndSetSliders('CUSTOM_CITYRAIN');" title="Load slider settings previously saved as a browser cookie.">&gt; Load</span>
+<br>
+<span class="actionlink" role="button" onclick="cloneIt()" title="Replicate this sound generator in a new, minified window, head to the index page, and select a new sound to add on top!"> Clone as Minified Player</span><br>
+<a href='/donate.php' class='powertip' title='For &#8471;atrons only.<br><br>Thanks for helping me running this website with a donation, once in a while!'>&#8471;</a> <a id="customURL2" role="button" href="" class="blue" title="Request a mp3 file that sounds just like what you are currently hearing, using your own slider settings.">Order as an Audio file</a> 
+<span id="currentLevels" onclick="print();" title="Current levels">&nbsp;&nbsp;&nbsp;</span>
+</p><h1>Presets</h1>
+<p>
+<span class='actionlink' onclick='setPreset(0.90,0.5,0.4,0.4,0,0,0,0,0,0,"Indian City");' title='Load new slider settings.' role='button'>Indian City</span> &bull; <span class='actionlink' onclick='setPreset(0,0,0.45,0,0.45,0.45,0,0,0,0,"Wet Road");' title='Load new slider settings.' role='button'>Wet Road</span> &bull; <span class='actionlink' onclick='setPreset(0.4,0,0,0,0,0.4,0.4,0.4,0.4,0.4,"Rainy Cafe");' title='Load new slider settings.' role='button'>Rainy Cafe</span> &bull; 
+<a href='/donate.php' class='powertip' title='For &#8471;atrons only.<br><br>Thanks for helping me running this website with a donation, once in a while!'>&#8471;</a>&nbsp;<span class="actionlink" title="Randomize the slider positions." onclick="window.location='/login.php'">Surprise!</span>
+	
+</p>
+<h1>Tape Speed Control</h1>
+<p>
+<a href='/donate.php' class='powertip' title='For &#8471;atrons only.<br><br>Thanks for helping me running this website with a donation, once in a while!'>&#8471;</a> 
+<span class="actionlink" role="button" title="Keep clicking to increase effect..." onclick="window.location='/login.php'">Slower</span> •
+<span class="actionlink" role="button" title="Keep clicking to increase effect..." onclick="window.location='/login.php'">Faster</span> •
+<span class="actionlink" role="button" title="Sets stems to different tape speeds each, randomly. Natural soundscapes will sound as if they were recorded at another time of the day." onclick="window.location='/login.php'">Shuffle!</span> •
+<span class="actionlink" role="button" title="Back to original speed" onclick="tune(1);">Reset</span>
+</p>
+
+<h1>Animation Control</h1>
+<p>
+	<a href='/donate.php' class='powertip' title='For &#8471;atrons only.<br><br>Thanks for helping me running this website with a donation, once in a while!'>&#8471;</a>	<span class="actionlink" role="button" id="nowMoving" title="Start animation" onclick="window.location='/login.php'">Start</span>
+		
+	<span class="playOff" id="01">&rarr;</span>
+
+	<span class="actionlink" role="button" id="state1" title="Assign current slider settings to snapshot A" onclick="window.location='/login.php'">A</span>
+		
+	<span class="playOff" id="21">&larr;</span> <span class="playOff" id="12">&rarr;</span>
+		
+	<span class="actionlink" role="button" id="state2" title="Assign current slider settings to snapshot B" onclick="window.location='/login.php'">B</span>
+		
+	<span class="playOff" id="32">&larr;</span> <span class="playOff" id="23">&rarr;</span>
+		
+	<span class="actionlink" role="button" id="state3" title="Assign current slider settings to snapshot C" onclick="window.location='/login.php'">C</span>
+		
+	<span class="playOff" id="13">&larr;</span> 
+</p> 
+</div>
+    <div class="contentShrunk"><p>If you <span class="highlight">&hearts; Rain in the City</span> try...</p>
+<p>
+
+<a href='.././NoiseMachines/customStormy.php'><img src='/Data/CUSTOM_STORMY/iphone-bigthumb.jpg' class='suggestImg powertipS' title='Bad Weather'></a><a href='.././NoiseMachines/cafeRestaurantNoiseGenerator.php'><img src='/Data/CAFE/iphone-bigthumb.jpg' class='suggestImg powertipS' title='Cafe Restaurant'></a><a href='.././NoiseMachines/carInteriorSoundscapeGenerator.php'><img src='/Data/CARINTERIOR/iphone-bigthumb.jpg' class='suggestImg powertipS' title='Car Interior'></a>
+
+</p>
+</div>
+	<div class="content"><h1>Instructions</h1>
+	<p class="lowlight"><em>Use a laptop or desktop computer, as you will be asked to use keyboard shortcuts.</em></p><p>Browse the site for slider contents: open any generator on myNoise, and select the sliders you want to use in your custom set by 'zeroing' all others, then hit <span class="highlight">[c]</span> to collect all active sliders into a hidden stack. Move to a next generator and repeat the process until you have accumulated a total of 10 sliders. Now hit <span class="highlight">[shift+c]</span> to render your custom generator. At any point in the process, press <span class="highlight">[x+c]</span> to clear the hidden stack.</p>
+	</div></div>
+	</div>
+	
+  <div id="footer" class="DIM">
+<p>&copy; 2013-2020 <a href="https://stephanepigeon.com">Dr. Ir. S. Pigeon </a> • myNoise bvba</p>
+</div>  </div>
+
+  
+<!-- end FULL INTERFACE -->
+    
+
+</div>
+<!-- end #container -->
 
 </body>
 </html>
