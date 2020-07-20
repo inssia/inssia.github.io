@@ -1,190 +1,117 @@
 <!doctype html>
-<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Web Audio API Loops Demo</title>
+<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+
+<title>Volume Control | Web Audio API</title>
+
+<link rel="stylesheet" href="/static/style.css" type="text/css" media="screen" />
 </head>
+
 <body>
 
-<h1>Soundscapes.</h1>
-<p>Click any button to demo.</p>
+<div id="container">
 
-    <form>
-        <button id="button-loop-1" type="button" value="1">Rain</button>
-        <button id="button-loop-2" type="button" value="2">Drip</button>
-    </form>
-	
-	<p><input type="range" min="0" max="100" value="100" oninput="audio.changeVolume(this);"> Volume</p>
+  <div id="nav">
+    <ul>
+      <li><a href="/samples">Samples</a>
+      </li>
+    </ul>
+  </div>
+
+  <div id="header">
+    <h1><a href="/">Web Audio API</a></h1>
+  </div>
 
 
-    <script>
-    //--------------
-    // Audio Object
-    //--------------
-    var audio = {
-        buffer: {},
-        compatibility: {},
-        files: [
-            'rain.wav',
-            'drip.wav'
-        ],
-        proceed: true,
-        source_loop: {},
-        source_once: {}
-    };
+  <div id="wrapper">
+    <div id="content">
 
-    //-----------------
-    // Audio Functions
-    //-----------------
-    audio.findSync = function(n) {
-        var first = 0,
-            current = 0,
-            offset = 0;
+      
+<div class="post">
+  <h2>Volume Control</h2>
+  <p>
+    A very simple example that lets you change the volume using a GainNode.
 
-        // Find the audio source with the earliest startTime to sync all others to
-        for (var i in audio.source_loop) {
-            current = audio.source_loop[i]._startTime;
-            if (current > 0) {
-                if (current < first || first === 0) {
-                    first = current;
-                }
-            }
-        }
+  </p>
+  <p>
+    <p><button style="display: block" disabled="true" onclick="sample.toggle();">Please wait, loading...</button></p>
 
-        if (audio.context.currentTime > first) {
-            offset = (audio.context.currentTime - first) % audio.buffer[n].duration;
-        }
+<p><input type="range" min="0" max="100" value="100" oninput="sample.changeVolume(this);"> Volume</p>
 
-        return offset;
-    };
-	
-	audio.changeVolume = function(element) {
-				this.gainNode = audio.context.createGain();
-				audio.source_loop = audio.context.createBufferSource();
-				audio.source_loop.connect(audio.context.destination);
-				audio.source_loop.connect(this.gainNode);
-				this.gainNode.connect(audio.context.destination);
-				var volume = element.value;
-				var fraction = parseInt(element.value) / parseInt(element.max);
-			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
-			  // sound as good.
-				this.gainNode.gain.value = fraction * fraction;
-				}; 
-	
 
-    audio.play = function(n) {
-		
-        if (audio.source_loop[n]._playing) {
-            audio.stop(n);
-        } else {
-            audio.source_loop[n] = audio.context.createBufferSource();
-            audio.source_loop[n].buffer = audio.buffer[n];
-            audio.source_loop[n].loop = true;
-            audio.source_loop[n].connect(audio.context.destination);
+<script>
 
-            var offset = audio.findSync(n);
-            audio.source_loop[n]._startTime = audio.context.currentTime;
+/*
+ * Copyright 2013 Boris Smus. All Rights Reserved.
 
-            if (audio.compatibility.start === 'noteOn') {
-                /*
-                The depreciated noteOn() function does not support offsets.
-                Compensate by using noteGrainOn() with an offset to play once and then schedule a noteOn() call to loop after that.
-                */
-                audio.source_once[n] = audio.context.createBufferSource();
-                audio.source_once[n].buffer = audio.buffer[n];
-                audio.source_once[n].connect(audio.context.destination);
-                audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
-                /*
-                Note about the third parameter of noteGrainOn().
-                If your sound is 10 seconds long, your offset 5 and duration 5 then you'll get what you expect.
-                If your sound is 10 seconds long, your offset 5 and duration 10 then the sound will play from the start instead of the offset.
-                */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-                // Now queue up our looping sound to start immediatly after the source_once audio plays.
-                audio.source_loop[n][audio.compatibility.start](audio.context.currentTime + (audio.buffer[n].duration - offset));
-            } else {
-                audio.source_loop[n][audio.compatibility.start](0, offset);
-            }
 
-            audio.source_loop[n]._playing = true;
-        }
-    };
+function VolumeSample() {
+  loadSounds(this, {
+    buffer: 'techno.wav'
+  }, onLoaded);
+  function onLoaded() {
+    var button = document.querySelector('button');
+    button.removeAttribute('disabled');
+    button.innerHTML = 'Play/pause';
+  };
+  this.isPlaying = false;
+};
 
-    audio.stop = function(n) {
-        if (audio.source_loop[n]._playing) {
-            audio.source_loop[n][audio.compatibility.stop](0);
-            audio.source_loop[n]._playing = false;
-            audio.source_loop[n]._startTime = 0;
-            if (audio.compatibility.start === 'noteOn') {
-                audio.source_once[n][audio.compatibility.stop](0);
-            }
-        }
-    };
+VolumeSample.prototype.play = function() {
+  this.gainNode = context.createGain();
+  this.source = context.createBufferSource();
+  this.source.buffer = this.buffer;
 
-    //-----------------------------
-    // Check Web Audio API Support
-    //-----------------------------
-    try {
-        // More info at http://caniuse.com/#feat=audio-api
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        audio.context = new window.AudioContext();
-    } catch(e) {
-        audio.proceed = false;
-        alert('Web Audio API not supported in this browser.');
-    }
+  // Connect source to a gain node
+  this.source.connect(this.gainNode);
+  // Connect gain node to destination
+  this.gainNode.connect(context.destination);
+  // Start playback in a loop
+  this.source.loop = true;
+  this.source[this.source.start ? 'start' : 'noteOn'](0);
+};
 
-    if (audio.proceed) {
-        //---------------
-        // Compatibility
-        //---------------
-        (function() {
-            var start = 'start',
-                stop = 'stop',
-                buffer = audio.context.createBufferSource();
+VolumeSample.prototype.changeVolume = function(element) {
+  var volume = element.value;
+  var fraction = parseInt(element.value) / parseInt(element.max);
+  // Let's use an x*x curve (x-squared) since simple linear (x) does not
+  // sound as good.
+  this.gainNode.gain.value = fraction * fraction;
+};
 
-            if (typeof buffer.start !== 'function') {
-                start = 'noteOn';
-            }
-            audio.compatibility.start = start;
+VolumeSample.prototype.stop = function() {
+  this.source[this.source.stop ? 'stop' : 'noteOff'](0);
+};
 
-            if (typeof buffer.stop !== 'function') {
-                stop = 'noteOff';
-            }
-            audio.compatibility.stop = stop;
-        })();
+VolumeSample.prototype.toggle = function() {
+  this.isPlaying ? this.stop() : this.play();
+  this.isPlaying = !this.isPlaying;
+};
 
-        //-------------------------------
-        // Setup Audio Files and Buttons
-        //-------------------------------
-        for (var a in audio.files) {
-            (function() {
-                var i = parseInt(a) + 1;
-                var req = new XMLHttpRequest();
-                req.open('GET', audio.files[i - 1], true); // array starts with 0 hence the -1
-                req.responseType = 'arraybuffer';
-                req.onload = function() {
-                    audio.context.decodeAudioData(
-                        req.response,
-                        function(buffer) {
-                            audio.buffer[i] = buffer;
-                            audio.source_loop[i] = {};
-                            var button = document.getElementById('button-loop-' + i);
-                            button.addEventListener('click', function(e) {
-                                e.preventDefault();
-                                audio.play(this.value);
-                            });
-                        },
-                        function() {
-                            console.log('Error decoding audio "' + audio.files[i - 1] + '".');
-                        }
-                    );
-                };
-                req.send();
-            })();
-        }
-		
-    }
-    </script>
+var sample = new VolumeSample();
+</script>
 
-</body>
+  </p>
+</div>
+
+
+    </div>
+
+  </div>
+
+  </body>
 </html>
+
