@@ -77,8 +77,8 @@
 			this.gainNode = audio.context.createGain();
 			audio.source_loop[n].connect(this.gainNode);
 			this.gainNode.connect(audio.context.destination);
-			var element = document.getElementById("slider").target.value;
-			audio.play.element = parseFloat (element);
+			var element = document.getElementById("slider").value;
+			audio.play.element = parseFloat (element.target);
 			var fraction = parseInt(element.value) / parseInt(element.max);
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
