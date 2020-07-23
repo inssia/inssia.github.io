@@ -76,13 +76,13 @@
 			audio.source_loop[n].connect(audio.gain_node);
 			audio.gain_node.connect(audio.context.destination);
 			var element = document.getElementById("slider");
-				element.addEventListener('click', function(e) {
+				element.addEventListener('mouseup', function(e) {
                                 e.preventDefault();
                                 audio.changeVolume(this.value);
                             });
 				
 				audio.changeVolume = function(element) {
-				var fraction = parseInt(element.value) / parseInt(element.max);
+				var fraction = parseInt(element.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
 				audio.gain_node.gain.value = fraction * fraction;
@@ -105,13 +105,13 @@
 				audio.source_once[n].connect(audio.gain_node);
 				audio.gain_node.connect(audio.context.destination);
 				var element = document.getElementById("slider");
-				element.addEventListener('click', function(e) {
+				element.addEventListener('mouseup', function(e) {
                                 e.preventDefault();
                                 audio.changeVolume(this.value);
                             });
 				
 				audio.changeVolume = function(element) {
-				var fraction = parseInt(element.value) / parseInt(element.max);
+				var fraction = parseInt(element.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
 				audio.gain_node.gain.value = fraction * fraction;
