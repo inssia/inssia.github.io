@@ -69,9 +69,11 @@
 			element.addEventListener('change', function(e) { //change?
                                 e.preventDefault();
                                 audio.changeVolume(this.value);
+								console.log(this.value);
                             });
 				
 		audio.changeVolume = function(element) {
+		console.log(element.value);
 		var fraction = parseFloat(element.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
