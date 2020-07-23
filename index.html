@@ -72,8 +72,8 @@
                             });
 				
 		audio.changeVolume = function(element) {
-		console.log(element.value);
-		var fraction = parseFloat(element.value) / 100;
+		console.log(element);
+		var fraction = parseFloat(element) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
 		console.log(fraction);
