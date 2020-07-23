@@ -85,7 +85,7 @@
 				var fraction = parseInt(element.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-				audio.gain_node.gain.value = fraction * fraction;
+				audio.gain_node.gain.value = fraction;
 				}
 
             var offset = audio.findSync(n);
@@ -114,7 +114,7 @@
 				var fraction = parseInt(element.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-				audio.gain_node.gain.value = fraction * fraction;
+				audio.gain_node.gain.value = fraction;
 				}
                 /*
                 Note about the third parameter of noteGrainOn().
