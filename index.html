@@ -82,10 +82,10 @@
                             });
 				
 				audio.changeVolume = function(element) {
-				var fraction = parseInt(element.value) / 100;
+				var fraction = parseFloat(element.target.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-				audio.gain_node.gain.value = fraction;
+				audio.gain_node.gain.value = fraction * fraction;
 				}
 
             var offset = audio.findSync(n);
@@ -111,10 +111,10 @@
                             });
 				
 				audio.changeVolume = function(element) {
-				var fraction = parseInt(element.value) / 100;
+				var fraction = parseFloat(element.target.value) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-				audio.gain_node.gain.value = fraction;
+				audio.gain_node.gain.value = fraction * fraction;
 				}
                 /*
                 Note about the third parameter of noteGrainOn().
