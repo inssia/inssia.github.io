@@ -67,17 +67,14 @@
 		audio.gain = audio.context.createGain();
 		var element = document.getElementById("slider");
 			element.addEventListener('change', function() { //change?
-  								console.log(this.value);
                                 audio.changeVolume(this.value);
                             });
 				
 		audio.changeVolume = function(element) {
-		console.log(element);
 		var fraction = parseFloat(element) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-		console.log(fraction);
-		audio.gain.gain.value = fraction * fraction;
+		audio.gain.gain.value = fraction;
 		}
 
         if (audio.source_loop[n]._playing) {
