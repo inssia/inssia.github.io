@@ -74,6 +74,9 @@
 		var fraction = parseFloat(element) / 100;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
+			if (fraction == 0) {
+				audio.stop(n);
+				}
 		audio.gain.gain.value = fraction;
 		}
 
