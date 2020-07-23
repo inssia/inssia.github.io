@@ -66,10 +66,9 @@
 	
 		audio.gain = audio.context.createGain();
 		var element = document.getElementById("slider");
-			element.addEventListener('change', function(e) { //change?
-                                e.preventDefault();
+			element.addEventListener('change', function() { //change?
+  								console.log(this.value);
                                 audio.changeVolume(this.value);
-								console.log(this.value);
                             });
 				
 		audio.changeVolume = function(element) {
