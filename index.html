@@ -12,7 +12,7 @@
     <form>
         <button id="button-loop-1" type="button" value="1">Rain</button>
         <button id="button-loop-2" type="button" value="2">Drip</button>
-		<input id="slider" type="range" min="0" max="100" value="100"> Volume </input>
+		<input id="slider" type="range" min="0" max="100" value="50"> Volume </input>
 
     </form>
 	
@@ -31,7 +31,7 @@
         ],
         proceed: true,
         source_loop: {},
-		gain_node: {},
+		gain: {},
         source_once: {}
     };
 
@@ -63,7 +63,21 @@
 	
 
     audio.play = function(n) {
-		
+	
+		audio.gain = audio.context.createGain();
+		var element = document.getElementById("slider");
+			element.addEventListener('change', function(e) { //change?
+                                e.preventDefault();
+                                audio.changeVolume(this.value);
+                            });
+				
+		audio.changeVolume = function(element) {
+		var fraction = parseFloat(element.value) / 100;
+			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
+			  // sound as good.
+		audio.gain.gain.value = fraction * fraction;
+		}
+
         if (audio.source_loop[n]._playing) {
             audio.stop(n);
         } else {
@@ -72,21 +86,9 @@
             audio.source_loop[n].loop = true;
             audio.source_loop[n].connect(audio.context.destination);
 			
-			audio.gain_node = audio.context.createGain();
-			audio.source_loop[n].connect(audio.gain_node);
-			audio.gain_node.connect(audio.context.destination);
-			var element = document.getElementById("slider");
-				element.addEventListener('mouseup', function(e) {
-                                e.preventDefault();
-                                audio.changeVolume(this.value);
-                            });
-				
-				audio.changeVolume = function(element) {
-				var fraction = parseFloat(element.target.value) / 100;
-			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
-			  // sound as good.
-				audio.gain_node.gain.value = fraction * fraction;
-				}
+			audio.source_loop[n].connect(audio.gain);
+			audio.gain.connect(audio.context.destination);
+			
 
             var offset = audio.findSync(n);
             audio.source_loop[n]._startTime = audio.context.currentTime;
@@ -101,21 +103,9 @@
                 audio.source_once[n].connect(audio.context.destination);
                 audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
 				
-				audio.gain_node = audio.context.createGain();
 				audio.source_once[n].connect(audio.gain_node);
 				audio.gain_node.connect(audio.context.destination);
-				var element = document.getElementById("slider");
-				element.addEventListener('mouseup', function(e) {
-                                e.preventDefault();
-                                audio.changeVolume(this.value);
-                            });
 				
-				audio.changeVolume = function(element) {
-				var fraction = parseFloat(element.target.value) / 100;
-			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
-			  // sound as good.
-				audio.gain_node.gain.value = fraction * fraction;
-				}
                 /*
                 Note about the third parameter of noteGrainOn().
                 If your sound is 10 seconds long, your offset 5 and duration 5 then you'll get what you expect.
