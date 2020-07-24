@@ -32,16 +32,35 @@
           box-shadow: inset 0px 0px 5px #c1c1c1;
 }
 
+
+.form{
+    display: block;
+    font-size:11px;
+    padding:4px 2px;
+    border:solid 1px #aacfe4;
+    width:70px;
+    margin:2px 0 20px 10px;
+}
+
 </style>
 
-    <form>
+    <form class=form>
         <button id="button-loop-1" type="button" class="button" value="1">Rain</button>
-        <button id="button-loop-2" type="button" class="button" value="2">Drip</button>
-		<button id="button-loop-3" type="button" class="button" value="3">Wind</button>
-        <button id="button-loop-4" type="button" class="button" value="4">Bird</button>
-        <button id="button-loop-5" type="button" class="button" value="5">Music</button>
+		<input id="rain-slider" type="range" min="0" max="100" value="50"> Rain Volume </input>
 		
-		<input id="slider" type="range" min="0" max="100" value="50"> Volume </input>
+        <button id="button-loop-2" type="button" class="button" value="2">Drip</button>
+		<input id="drip-slider" type="range" min="0" max="100" value="50"> Drip Volume </input>
+		
+		<button id="button-loop-3" type="button" class="button" value="3">Wind</button>
+		<input id="wind-slider" type="range" min="0" max="100" value="50"> Wind Volume </input>
+		
+        <button id="button-loop-4" type="button" class="button" value="4">Bird</button>
+		<input id="bird-slider" type="range" min="0" max="100" value="50"> Bird Volume </input>
+		
+        <button id="button-loop-5" type="button" class="button" value="5">Music</button>
+		<input id="music-slider" type="range" min="0" max="100" value="50"> Music Volume </input>
+		
+		<input id="slider" type="range" min="0" max="100" value="50"> Master Volume </input>
 
     </form>
 
