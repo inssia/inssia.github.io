@@ -116,7 +116,7 @@
 
     audio.play = function(n) {
 	
-		audio.gain(n) = audio.context.createGain();
+		audio.gain[n] = audio.context.createGain();
 		var element = document.getElementById("slider");
 			element.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value);
@@ -126,7 +126,7 @@
 		var fraction = parseFloat(element) / 50;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-			  audio.gain(n).gain.value = fraction * fraction;
+			  audio.gain[n].gain.value = fraction * fraction;
 
 		}
 
@@ -138,8 +138,8 @@
             audio.source_loop[n].buffer = audio.buffer[n];
             audio.source_loop[n].loop = true;
 			
-			audio.source_loop[n].connect(audio.gain(n));
-			audio.gain(n).connect(audio.context.destination);
+			audio.source_loop[n].connect(audio.gain[n]);
+			audio.gain[n].connect(audio.context.destination);
 			
 
             var offset = audio.findSync(n);
@@ -154,8 +154,8 @@
                 audio.source_once[n].buffer = audio.buffer[n];
                 audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
 				
-				audio.source_once[n].connect(audio.gain(n));
-				audio.gain(n).connect(audio.context.destination);
+				audio.source_once[n].connect(audio.gain[n]);
+				audio.gain[n].connect(audio.context.destination);
 				
                 /*
                 Note about the third parameter of noteGrainOn().
