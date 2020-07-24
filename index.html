@@ -119,11 +119,13 @@
 
     audio.play = function(n) {
 	
-		audio.gain[n] = audio.context.createGain();
-		var element = document.getElementById("slider");
-			element.addEventListener('change', function() { //change?
+		var slider = document.getElementById("slider");
+			slider.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value);
                             });
+		
+		audio.gain[n] = {};
+		audio.gain[n] = audio.context.createGain();
 				
 		audio.changeVolume = function(element) {
 		var fraction = parseFloat(element) / 50;
@@ -243,7 +245,6 @@
 								else {
 								button.className = 'button';
 								}
-								console.log(this.value);
                                 audio.play(this.value);
                             });
                         },
