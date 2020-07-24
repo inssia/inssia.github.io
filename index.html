@@ -115,27 +115,29 @@
         return offset;
     };
 
-	
-
-    audio.play = function(n) {
-	
+	audio.setup_gain = function(n) {
 		var slider = document.getElementById("slider-" + n);
 			slider.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value);
                             });
 							
+		
+		
+		audio.gain[n] = {};
+		audio.gain[n] = audio.context.createGain();
+				
+		
 		var master_volume = document.getElementById("slider");
 			master_volume.addEventListener('change', function() { //change?
                                 audio.controlAll(this.value);
                             });
 		
-		audio.gain[n] = {};
-		audio.gain[n] = audio.context.createGain();
-				
+		}
+		
+	
 		audio.changeVolume = function(element) {
 		var fraction = parseFloat(element) / 50;
 	    audio.gain[n].gain.value = fraction * fraction;
-
 		}
 		
 		audio.controlAll = function(element) {
@@ -144,7 +146,10 @@
 			audio.gain[i].gain.value = fraction * fraction;
 			i++;
 			}
-		}
+			}
+	
+
+    audio.play = function(n) {
 
         if (audio.source_loop[n]._playing) {
             audio.stop(n);
@@ -247,6 +252,7 @@
                         function(buffer) {
                             audio.buffer[i] = buffer;
                             audio.source_loop[i] = {};
+							audio.setup_gain(i);
                             var button = document.getElementById('button-loop-' + i);
                             button.addEventListener('click', function(e) {
                                 e.preventDefault();
