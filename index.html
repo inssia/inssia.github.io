@@ -18,8 +18,14 @@
   cursor: pointer;
 }
 
-.button:focus {
+.click {
   background: #e5e5e5;
+  
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  
   outline: none;
   -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
      -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
@@ -207,6 +213,12 @@
                             button.addEventListener('click', function(e) {
                                 e.preventDefault();
                                 audio.play(this.value);
+								if (button.className !== 'click') {
+									button.className = 'click';
+								}
+								else {
+								button.className = 'button';
+								}
                             });
                         },
                         function() {
