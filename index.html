@@ -139,8 +139,11 @@
 		}
 		
 		audio.controlAll = function(element) {
-		var fraction = parseFloat(element) / 50;
-	    audio.gain.gain.value = fraction * fraction;
+			var fraction = parseFloat(element) / 50;
+			for (var i in audio.gain) {
+			audio.gain[i].gain.value = fraction * fraction;
+			i++;
+			}
 		}
 
         if (audio.source_loop[n]._playing) {
