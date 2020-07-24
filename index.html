@@ -37,12 +37,17 @@
     <form>
         <button id="button-loop-1" type="button" class="button" value="1">Rain</button>
         <button id="button-loop-2" type="button" class="button" value="2">Drip</button>
+		<button id="button-loop-3" type="button" class="button" value="3">Wind</button>
+        <button id="button-loop-4" type="button" class="button" value="4">Bird</button>
+        <button id="button-loop-5" type="button" class="button" value="5">Music</button>
+		
 		<input id="slider" type="range" min="0" max="100" value="50"> Volume </input>
 
     </form>
-	
 
-
+<p>Wind sound credit: Astounded, Christopher J Astbury, Switzerland - freesound.org
+   Flute sound credit: juskiddink - freesound.org
+	used under attribution license	</p>
     <script>
     //--------------
     // Audio Object
@@ -54,6 +59,9 @@
         files: [
             'rain.wav',
             'drip.wav'
+			'wind.wav'
+			'bird.wav'
+			'music.wav'
         ],
         proceed: true,
         source_loop: {},
@@ -212,13 +220,13 @@
                             var button = document.getElementById('button-loop-' + i);
                             button.addEventListener('click', function(e) {
                                 e.preventDefault();
-                                audio.play(this.value);
 								if (button.className !== 'click') {
 									button.className = 'click';
 								}
 								else {
 								button.className = 'button';
 								}
+                                audio.play(this.value);
                             });
                         },
                         function() {
