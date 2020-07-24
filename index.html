@@ -9,9 +9,28 @@
 <h1>Soundscapes.</h1>
 <p>Click any button to demo.</p>
 
+<style>
+.button {
+  background: #ededed;
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.button:focus {
+  background: #e5e5e5;
+  outline: none;
+  -webkit-box-shadow: inset 0px 0px 5px #c1c1c1;
+     -moz-box-shadow: inset 0px 0px 5px #c1c1c1;
+          box-shadow: inset 0px 0px 5px #c1c1c1;
+}
+
+</style>
+
     <form>
-        <button id="button-loop-1" type="button" value="1">Rain</button>
-        <button id="button-loop-2" type="button" value="2">Drip</button>
+        <button id="button-loop-1" type="button" class="button" value="1">Rain</button>
+        <button id="button-loop-2" type="button" class="button" value="2">Drip</button>
 		<input id="slider" type="range" min="0" max="100" value="50"> Volume </input>
 
     </form>
@@ -22,6 +41,7 @@
     //--------------
     // Audio Object
     //--------------
+		
     var audio = {
         buffer: {},
         compatibility: {},
@@ -80,6 +100,9 @@
 
         if (audio.source_loop[n]._playing) {
             audio.stop(n);
+			
+			
+			
         } else {
             audio.source_loop[n] = audio.context.createBufferSource();
             audio.source_loop[n].buffer = audio.buffer[n];
