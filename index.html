@@ -123,16 +123,24 @@
 			slider.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value);
                             });
+							
+		var master_volume = document.getElementById("slider");
+			master_volume.addEventListener('change', function() { //change?
+                                audio.controlAll(this.value);
+                            });
 		
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
 				
 		audio.changeVolume = function(element) {
 		var fraction = parseFloat(element) / 50;
-			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
-			  // sound as good.
-		audio.gain[n].gain.value = fraction * fraction;
+	    audio.gain[n].gain.value = fraction * fraction;
 
+		}
+		
+		audio.controlAll = function(element) {
+		var fraction = parseFloat(element) / 50;
+	    audio.gain.gain.value = fraction * fraction;
 		}
 
         if (audio.source_loop[n]._playing) {
