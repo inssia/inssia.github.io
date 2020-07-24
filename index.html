@@ -135,15 +135,11 @@
 		audio.changeVolume = function(element) {
 		var fraction = parseFloat(element) / 50;
 	    audio.gain[n].gain.value = fraction * fraction;
-
 		}
 		
 		audio.controlAll = function(element) {
 			var fraction = parseFloat(element) / 50;
-			for (var i in audio.gain) {
-			audio.gain[i].gain.value = fraction * fraction;
-			i++;
-			}
+			audio.gain.gain.value = fraction * fraction;
 		}
 
         if (audio.source_loop[n]._playing) {
