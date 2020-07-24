@@ -71,13 +71,14 @@
                             });
 				
 		audio.changeVolume = function(element) {
-		var fraction = parseFloat(element) / 100;
+		var fraction = parseFloat(element) / 50;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-			if (fraction == 0) {
-				audio.stop(n);
+			  if (fraction == 0) {
+			    audio.gain.gain.value = 0;
 				}
-		audio.gain.gain.value = fraction;
+
+		audio.gain.gain.value = fraction * fraction;
 		}
 
         if (audio.source_loop[n]._playing) {
