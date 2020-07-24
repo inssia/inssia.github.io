@@ -74,14 +74,11 @@
 		var fraction = parseFloat(element) / 50;
 			  // Let's use an x*x curve (x-squared) since simple linear (x) does not
 			  // sound as good.
-			  if (fraction == 0) {
-					audio.stop(n);
-				}
-				if (fraction > 0) {
-					audio.play(n);
-				}
+			  audio.gain.gain.value = fraction * fraction;
 
-		audio.gain.gain.value = fraction * fraction;
+			  if (fraction == 0) {
+				audio.gain.gain.value = 0;
+				}
 		}
 
         if (audio.source_loop[n]._playing) {
@@ -90,7 +87,7 @@
             audio.source_loop[n] = audio.context.createBufferSource();
             audio.source_loop[n].buffer = audio.buffer[n];
             audio.source_loop[n].loop = true;
-            audio.source_loop[n].connect(audio.context.destination);
+            //audio.source_loop[n].connect(audio.context.destination);
 			
 			audio.source_loop[n].connect(audio.gain);
 			audio.gain.connect(audio.context.destination);
@@ -106,7 +103,7 @@
                 */
                 audio.source_once[n] = audio.context.createBufferSource();
                 audio.source_once[n].buffer = audio.buffer[n];
-                audio.source_once[n].connect(audio.context.destination);
+                //audio.source_once[n].connect(audio.context.destination);
                 audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
 				
 				audio.source_once[n].connect(audio.gain_node);
