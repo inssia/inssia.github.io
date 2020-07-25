@@ -118,7 +118,7 @@
 	audio.setup_gain = function(n) {
 		var slider = document.getElementById("slider-" + n);
 			slider.addEventListener('change', function() { //change?
-                                audio.changeVolume(this.value, n);
+                                audio.changeVolume(this.value);
                             });
 							
 		
@@ -132,12 +132,7 @@
                                 audio.controlAll(this.value);
                             });
 							
-
-		
-		}
-		
-	
-		audio.changeVolume = function(element, n) {
+		audio.changeVolume = function(element) {
 		var fraction = parseFloat(element) / 50;
 	    audio.gain[n].gain.value = fraction * fraction;
 		}
@@ -148,7 +143,13 @@
 			audio.gain[i].gain.value = fraction * fraction;
 			i++;
 			}
+			slider.value = element;
 			}
+		
+		}
+		
+	
+
 		
 		
 	
