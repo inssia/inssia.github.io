@@ -142,16 +142,11 @@
 		
 		var louder = document.getElementById("louder");
 			louder.addEventListener('click', function() { //change?
-			if (louder.className !== 'click') {
-				louder.className = 'click';
-								}
-				else {
-				louder.className = 'button';
-								}
+			
                 for (var i in audio.gain) {
 					var slider = document.getElementById("slider-" + i);
 					if (slider.value < 100) {
-					slider.value += 20;
+					slider.value += 0.5;
 					audio.gain[i].gain.value += 0.2;
 					}
 					i++;
@@ -160,16 +155,10 @@
 			
 				var quieter = document.getElementById("quieter");
 			quieter.addEventListener('click', function() { //change?
-			if (quieter.className !== 'click') {
-					quieter.className = 'click';
-								}
-					else {
-					quieter.className = 'button';
-								}
                 for (var i in audio.gain) {
 					var slider = document.getElementById("slider-" + i);
 					if (slider.value > 0) {
-					slider.value -= 20;
+					slider.value -= 0.5;
 					audio.gain[i].gain.value -= 0.2;
 					}
 					i++;
