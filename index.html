@@ -147,9 +147,9 @@
                             });
 					
 		audio.controlAll = function(element) {
-			var fraction = parseFloat(element) /50;
+			var fraction = parseFloat(element) / 50;
 			console.log(master_gain.gain.value);
-			master_gain.gain.value *= fraction;
+			master_gain.gain.value = fraction;
 			console.log(master_gain.gain.value);
 			for (var i in audio.gain) {
 			var slider = document.getElementById("slider-" + i);
