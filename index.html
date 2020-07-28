@@ -133,6 +133,9 @@
 		audio.gain[n] = audio.context.createGain();
 		audio.gain[n].connect(audio.context.destination);
 		
+		
+		}
+		
 		var louder = document.getElementById("louder");
 			louder.addEventListener('click', function() { //change?
 			audio.increaseVolume();	
@@ -140,15 +143,9 @@
 			
 		var quieter = document.getElementById("quieter");
 			quieter.addEventListener('click', function() { //change? 
-			decreaseVolume();
-                
+			audio.decreaseVolume();    
             });
 					
-		
-		
-		}
-		
-	
 		audio.changeVolume = function(element, n) {
 		var fraction = parseFloat(element) / 50;
 	    audio.gain[n].gain.value = fraction * fraction;
