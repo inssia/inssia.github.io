@@ -141,23 +141,44 @@
 
 				
 		
-		var master_volume = document.getElementById("slider");
-			master_volume.addEventListener('change', function() { //change?
-                                audio.controlAll(this.value);
+		var louder = document.getElementById("louder");
+			louder.addEventListener('click', function() { //change?
+			if (louder.className !== 'click') {
+				louder.className = 'click';
+								}
+				else {
+				louder.className = 'button';
+								}
+                for (var i in audio.gain) {
+					var slider = document.getElementById("slider-" + i);
+					if (slider.value < 100) {
+					slider.value += 20;
+					audio.gain[i].gain.value += 0.2;
+					}
+					i++;
+			}
+			});
+			
+				var quieter = document.getElementById("quieter");
+			quieter.addEventListener('click', function() { //change?
+			if (quieter.className !== 'click') {
+					quieter.className = 'click';
+								}
+					else {
+					quieter.className = 'button';
+								}
+                for (var i in audio.gain) {
+					var slider = document.getElementById("slider-" + i);
+					if (slider.value > 100) {
+					slider.value -= 20;
+					audio.gain[i].gain.value -= 0.2;
+					}
+					i++;
+			}
+                
                             });
 					
-		audio.controlAll = function(element) {
-			var fraction = parseFloat(element) / 50;
-			console.log(master_gain.gain.value);
-			master_gain.gain.value = fraction;
-			console.log(master_gain.gain.value);
-			for (var i in audio.gain) {
-			var slider = document.getElementById("slider-" + i);
-			slider.value = master_gain.gain.value * 50;
-			i++;
-			}
-			
-			}			
+		
 		
 		}
 		
