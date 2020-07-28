@@ -146,9 +146,9 @@
 		audio.controlAll = function(element) {
 			var fraction = parseFloat(element) / 50;
 			for (var i in audio.gain) {
-			audio.gain[i].gain.value *=  fraction;
+			audio.gain[i].gain.value =  fraction;
 			var slider = document.getElementById("slider-" + i);
-			slider.value = audio.gain[i].gain.value;
+			slider.value = audio.gain[i].gain.value * 50;
 			i++;
 			}
 			
