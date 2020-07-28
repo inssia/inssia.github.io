@@ -137,11 +137,14 @@
 			louder.addEventListener('click', function() { //change?
 			
                 for (var i in audio.gain) {
+				console.log(i);
 					var slider = document.getElementById("slider-" + i);
 					if (slider.value < 100) {
-					console.log(slider.value);
+					console.log (slider.value);
 					slider.value += 0.5;
+					console.log (slider.value);
 					audio.gain[i].gain.value += 0.2;
+					console.log(audio.gain[i].gain.value);
 					}
 					i++;
 			}
