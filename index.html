@@ -154,23 +154,29 @@
 	    audio.gain[n].gain.value = fraction * fraction;
 		}
 		
-		audio.increaseVolume = function {
+		audio.increaseVolume = function() {
+		for (var n in audio.gain) {
+		console.log("Number" + n);
 		var slider = document.getElementById("slider-" + n);
+					console.log("before slider value" + slider.value);
 					if (slider.value < 100) {
-					console.log (slider.value);
 					slider.value += 0.5;
-					console.log (slider.value);
+					console.log("after slider" + slider.value);
+					console.log("before gain" + audio.gain[n].gain.value);
 					audio.gain[n].gain.value += 0.2;
-					console.log(audio.gain[n].gain.value);
+					console.log("after gain" + audio.gain[n].gain.value);
+					}
 					}
 		}
 		
-		audio.decreaseVolume = function {
+		audio.decreaseVolume = function() {
+		for (var n in audio.gain) {
 		var slider = document.getElementById("slider-" + n);
 					if (slider.value > 0) {
-					console.log(slider.value);
 					slider.value -= 0.5;
 					audio.gain[n].gain.value -= 0.2;
+					}
+					}
 		}		
 		
 		
