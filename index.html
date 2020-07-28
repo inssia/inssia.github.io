@@ -131,14 +131,7 @@
 		
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
-		var master_gain = audio.context.createGain();
-		for (var i in audio.gain) {
-			audio.gain[i].connect(master_gain);
-			i++;
-			}
-		master_gain.connect(audio.context.destination);
-
-				
+		audio.gain[n].connect(audio.context.destination);
 		
 		var louder = document.getElementById("louder");
 			louder.addEventListener('click', function() { //change?
@@ -146,6 +139,7 @@
                 for (var i in audio.gain) {
 					var slider = document.getElementById("slider-" + i);
 					if (slider.value < 100) {
+					console.log(slider.value);
 					slider.value += 0.5;
 					audio.gain[i].gain.value += 0.2;
 					}
@@ -158,6 +152,7 @@
                 for (var i in audio.gain) {
 					var slider = document.getElementById("slider-" + i);
 					if (slider.value > 0) {
+					console.log(slider.value);
 					slider.value -= 0.5;
 					audio.gain[i].gain.value -= 0.2;
 					}
@@ -192,7 +187,6 @@
             audio.source_loop[n].loop = true;
 			
 			audio.source_loop[n].connect(audio.gain[n]);
-			//audio.gain[n].connect(audio.context.destination);
 			
 
             var offset = audio.findSync(n);
@@ -208,7 +202,6 @@
                 audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
 				
 				audio.source_once[n].connect(audio.gain[n]);
-				//audio.gain[n].connect(audio.context.destination);
 				
                 /*
                 Note about the third parameter of noteGrainOn().
