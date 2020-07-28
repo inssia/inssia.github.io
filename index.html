@@ -59,6 +59,12 @@
         <button id="button-loop-5" type="button" class="button" value="5">Music</button>
 		<input id="slider-5" type="range" min="0" max="100" value="50"> Music Volume </input>
 		
+		<p>Load your own sound!</p>
+		
+		<input id=button-loop-6 type=file accept="audio/*">Select a file</input>
+		<input id="slider-6" type="range" min="0" max="100" value="50"> Your sound </input>
+
+		
 		<input id="slider" type="range" min="0" max="100" value="50"> Master Volume </input>
 
     </form>
@@ -81,7 +87,7 @@
             'rain.wav',
             'drip.wav',
 			'wind.wav',
-			'file:///Users/Inssia/inssia.github.io/birds.wav',
+			'birds.wav',
 			'music.wav'
         ],
         proceed: true,
@@ -114,6 +120,12 @@
 
         return offset;
     };
+	
+	audio.file_load = function() {
+		var file = document.getElementById("file");
+		audio.files.push(file);
+	
+	}
 
 	audio.setup_gain = function(n) {
 		var slider = document.getElementById("slider-" + n);
@@ -125,6 +137,13 @@
 		
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
+		var master_gain = audio.context.createGain();
+		for (var i in audio.gain) {
+			audio.gain[i].connect(master_gain);
+			i++;
+			}
+		master_gain.connect(audio.context.destination);
+
 				
 		
 		var master_volume = document.getElementById("slider");
@@ -144,11 +163,6 @@
 		
 		audio.controlAll = function(element) {
 			var fraction = parseFloat(element) / 50;
-			var master_gain = audio.context.createGain();
-			for (var i in audio.gain) {
-			audio.gain[i].connect(master_gain);
-			i++;
-			}
 			master_gain = fraction * fraction;
 			}
 		
@@ -166,7 +180,7 @@
             audio.source_loop[n].loop = true;
 			
 			audio.source_loop[n].connect(audio.gain[n]);
-			audio.gain[n].connect(audio.context.destination);
+			//audio.gain[n].connect(audio.context.destination);
 			
 
             var offset = audio.findSync(n);
@@ -182,7 +196,7 @@
                 audio.source_once[n].noteGrainOn(0, offset, audio.buffer[n].duration - offset); // currentTime, offset, duration
 				
 				audio.source_once[n].connect(audio.gain[n]);
-				audio.gain[n].connect(audio.context.destination);
+				//audio.gain[n].connect(audio.context.destination);
 				
                 /*
                 Note about the third parameter of noteGrainOn().
