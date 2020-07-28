@@ -135,34 +135,14 @@
 		
 		var louder = document.getElementById("louder");
 			louder.addEventListener('click', function() { //change?
-			
-                for (var i in audio.gain) {
-				console.log(i);
-					var slider = document.getElementById("slider-" + i);
-					if (slider.value < 100) {
-					console.log (slider.value);
-					slider.value += 0.5;
-					console.log (slider.value);
-					audio.gain[i].gain.value += 0.2;
-					console.log(audio.gain[i].gain.value);
-					}
-					i++;
-			}
+			audio.increaseVolume();	
 			});
 			
-				var quieter = document.getElementById("quieter");
-			quieter.addEventListener('click', function() { //change?
-                for (var i in audio.gain) {
-					var slider = document.getElementById("slider-" + i);
-					if (slider.value > 0) {
-					console.log(slider.value);
-					slider.value -= 0.5;
-					audio.gain[i].gain.value -= 0.2;
-					}
-					i++;
-			}
+		var quieter = document.getElementById("quieter");
+			quieter.addEventListener('click', function() { //change? 
+			decreaseVolume();
                 
-                            });
+            });
 					
 		
 		
@@ -173,6 +153,26 @@
 		var fraction = parseFloat(element) / 50;
 	    audio.gain[n].gain.value = fraction * fraction;
 		}
+		
+		audio.increaseVolume = function {
+		var slider = document.getElementById("slider-" + n);
+					if (slider.value < 100) {
+					console.log (slider.value);
+					slider.value += 0.5;
+					console.log (slider.value);
+					audio.gain[n].gain.value += 0.2;
+					console.log(audio.gain[n].gain.value);
+					}
+		}
+		
+		audio.decreaseVolume = function {
+		var slider = document.getElementById("slider-" + n);
+					if (slider.value > 0) {
+					console.log(slider.value);
+					slider.value -= 0.5;
+					audio.gain[n].gain.value -= 0.2;
+		}		
+		
 		
 
 		
