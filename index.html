@@ -148,10 +148,10 @@
 					
 		audio.controlAll = function(element) {
 			var fraction = parseFloat(element) /50;
-			for (var i in audio.gain) {
 			master_gain.gain.value *= fraction;
+			for (var i in audio.gain) {
 			var slider = document.getElementById("slider-" + i);
-			slider.value = audio.gain[i].gain.value * 50;
+			slider.value = master_gain.gain.value * 50;
 			i++;
 			}
 			
