@@ -81,7 +81,7 @@
             'rain.wav',
             'drip.wav',
 			'wind.wav',
-			'bird.wav',
+			'file:///Users/Inssia/inssia.github.io/birds.wav',
 			'music.wav'
         ],
         proceed: true,
@@ -144,10 +144,12 @@
 		
 		audio.controlAll = function(element) {
 			var fraction = parseFloat(element) / 50;
+			var master_gain = audio.context.createGain();
 			for (var i in audio.gain) {
-			audio.gain[i].gain.value = fraction * fraction;
+			audio.gain[i].connect(master_gain);
 			i++;
 			}
+			master_gain = fraction * fraction;
 			}
 		
 		
