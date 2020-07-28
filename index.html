@@ -63,9 +63,7 @@
 
     </form>
 	
-	<button id="button-loop-6" type="button" class="button" value="6">Your music</button>		
-	<input id=file type=file accept="audio/*">
-	<input id="slider-6" type="range" min="0" max="100" value="50"> Your sound </input>
+
 
 <p>Wind sound credit: Astounded, Christopher J Astbury, Switzerland - freesound.org </p>
 <p>   Flute sound credit: juskiddink - freesound.org </p>
@@ -119,11 +117,7 @@
         return offset;
     };
 	
-	audio.file_load = function() {
-		var file = document.getElementById("file");
-		audio.files.push(file);
-	
-	}
+
 
 	audio.setup_gain = function(n) {
 		var slider = document.getElementById("slider-" + n);
@@ -148,7 +142,17 @@
 			master_volume.addEventListener('change', function() { //change?
                                 audio.controlAll(this.value);
                             });
-							
+					
+		audio.controlAll = function(element) {
+			var fraction = parseFloat(element) / 50;
+			for (var i in audio.gain) {
+			audio.gain[i].gain.value *=  fraction;
+			var slider = document.getElementById("slider-" + i);
+			slider.value = audio.gain[i].gain.value * 50;
+			i++;
+			}
+			
+			}					
 
 		
 		}
@@ -159,10 +163,7 @@
 	    audio.gain[n].gain.value = fraction * fraction;
 		}
 		
-		audio.controlAll = function(element) {
-			var fraction = parseFloat(element) / 50;
-			master_gain = fraction * fraction;
-			}
+
 		
 		
 	
@@ -271,7 +272,6 @@
                             audio.buffer[i] = buffer;
                             audio.source_loop[i] = {};
 							audio.setup_gain(i);
-							audio.file_load();
                             var button = document.getElementById('button-loop-' + i);
                             button.addEventListener('click', function(e) {
                                 e.preventDefault();
