@@ -271,6 +271,7 @@
                             audio.buffer[i] = buffer;
                             audio.source_loop[i] = {};
 							audio.setup_gain(i);
+							audio.file_load();
                             var button = document.getElementById('button-loop-' + i);
                             button.addEventListener('click', function(e) {
                                 e.preventDefault();
