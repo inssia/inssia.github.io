@@ -166,7 +166,7 @@
 				}
 		}		
 		
-
+		audio.master_setup();
 		
 		audio.master_setup = function() {
 			var master_gain = audio.context.createGain();
@@ -183,7 +183,7 @@
 				audio.controlAll = function(volume) {
 				var fraction = volume/100;
 				master_gain = fraction;
-		}
+				}
 			
 			var louder = document.getElementById("louder");
 				louder.addEventListener('click', function() { //change?
@@ -196,7 +196,7 @@
 				});
 		}
 		
-		audio.master_setup();
+		
 
 		audio.play = function(n) {
 	
