@@ -92,6 +92,7 @@
         ],
         proceed: true,
 		gain: {},
+		master_gain: {},
         source_loop: {},
         source_once: {}
     };
@@ -166,14 +167,14 @@
 				}
 		}		
 		
-		master_setup();
 		
-		master_setup = function() {
-			var master_gain = audio.context.createGain();
+		audio.master_setup = function() {
+			audio.master_gain = {};
+			audio.master_gain = audio.context.createGain();
 				for (var i in audio.gain) {
-					audio.gain[i].connect(master_gain);
+					audio.gain[i].connect(audio.master_gain);
 				}
-			master_gain.connect(audio.context.destination);
+			audio.master_gain.connect(audio.context.destination);
 			
 			var master_slider = document.getElementById("master_slider");
 			master_slider.addEventListener('change', function() { //change?
@@ -182,7 +183,7 @@
 								
 				audio.controlAll = function(volume) {
 				var fraction = volume/100;
-				master_gain = fraction;
+				audio.master_gain = fraction;
 				}
 			
 			var louder = document.getElementById("louder");
@@ -196,7 +197,8 @@
 				});
 		}
 		
-		
+		audio.master_setup();
+
 
 		audio.play = function(n) {
 	
