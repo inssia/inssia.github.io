@@ -135,7 +135,7 @@
 		
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
-		
+		audio.gain[n].connect(audio.master_gain);
 		}
 		
 					
@@ -172,9 +172,6 @@
 		audio.master_setup = function() {
 			audio.master_gain = {};
 			audio.master_gain = audio.context.createGain();
-				for (var i in audio.gain) {
-					audio.gain[i].connect(audio.master_gain);
-				}
 			audio.master_gain.connect(audio.context.destination);
 			
 			var master_slider = document.getElementById("master_slider");
