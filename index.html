@@ -38,7 +38,7 @@
 	grid-row-gap: 20px;
 	grid-column-gap: 5px;
 
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(3, 1fr) fit-content(20%);
 }
 
 </style>
@@ -197,7 +197,6 @@
 				});
 		}
 		
-		audio.master_setup();
 
 
 		audio.play = function(n) {
@@ -268,6 +267,8 @@
     }
 
     if (audio.proceed) {
+		audio.master_setup();
+
         //---------------
         // Compatibility
         //---------------
