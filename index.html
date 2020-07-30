@@ -146,10 +146,16 @@
 		
 		audio.increaseVolume = function() {
 		for (var n in audio.gain) {
+		console.log(n);
 			var slider = document.getElementById("slider-" + n);
 				if (slider.value < 100) {
+				console.log("before slider" + slider.value);
 				slider.value = slider.value + 5;
+				console.log("after slider" + slider.value);
+				console.log("before gain"  + audio.gain[n].gain.value);
 				audio.gain[n].gain.value = audio.gain[n].gain.value + 0.2;
+				console.log("after gain" + audio.gain[n].gain.value);
+
 						}  
                     
 					
@@ -170,7 +176,7 @@
 		
 		
 		audio.master_setup = function() {
-			audio.master_gain = {};
+			//audio.master_gain = {};
 			audio.master_gain = audio.context.createGain();
 			audio.master_gain.connect(audio.context.destination);
 			
@@ -180,7 +186,8 @@
 								});
 								
 				audio.controlAll = function(volume) {
-				var fraction = volume/100;
+				var fraction = parseFloat(volume)/100;
+				console.log(fraction);
 				audio.master_gain = fraction;
 				}
 			
