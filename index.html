@@ -166,9 +166,9 @@
 				}
 		}		
 		
-		audio.master_setup();
+		master_setup();
 		
-		audio.master_setup = function() {
+		master_setup = function() {
 			var master_gain = audio.context.createGain();
 				for (var i in audio.gain) {
 					audio.gain[i].connect(master_gain);
