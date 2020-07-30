@@ -145,12 +145,11 @@
 		audio.increaseVolume = function() {
 		for (var n in audio.gain) {
 			var slider = document.getElementById("slider-" + n);
-			slider.addEventListener('change', function() { //change?
 				if (slider.value < 100) {
 				slider.value = slider.value + 5;
 				audio.gain[n].gain.value = audio.gain[n].gain.value + 0.2;
 						}  
-                    });
+                    
 					
 				}
 		}
@@ -158,12 +157,11 @@
 		audio.decreaseVolume = function() {
 		for (var n in audio.gain) {
 			var slider = document.getElementById("slider-" + n);
-			slider.addEventListener('change', function() { //change?
 				if (slider.value > 0) {
 				slider.value = slider.value - 5;
 				audio.gain[n].gain.value = audio.gain[n].gain.value - 0.2;
 						}  
-                    });
+              
 					
 				}
 		}		
@@ -179,7 +177,7 @@
 			master_gain = fraction;
 		}
 		
-		var master_slider = document.getElementById("master_slider").value;
+		var master_slider = document.getElementById("master_slider");
 		master_slider.addEventListener('change', function() { //change?
                                 audio.controlAll(this.value);
                             });
