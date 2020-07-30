@@ -177,11 +177,17 @@
 			master_gain = fraction;
 		}
 		
+
+
+		
+
+    audio.play = function(n) {
+	
 		var master_slider = document.getElementById("master_slider");
 		master_slider.addEventListener('change', function() { //change?
                                 audio.controlAll(this.value);
                             });
-							
+		
 		var louder = document.getElementById("louder");
 			louder.addEventListener('click', function() { //change?
 			audio.increaseVolume();	
@@ -191,9 +197,6 @@
 			quieter.addEventListener('click', function() { //change? 
 			audio.decreaseVolume();    
             });
-		
-
-    audio.play = function(n) {
 
         if (audio.source_loop[n]._playing) {
             audio.stop(n);
