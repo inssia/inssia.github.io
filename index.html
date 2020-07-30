@@ -58,11 +58,7 @@
 		
         <button id="button-loop-5" type="button" class="button" value="5">Music</button>
 		<input id="slider-5" type="range" min="0" max="100" value="50"> Music Volume </input>
-		
-        <button id="louder" type="button" class="button" >Make Louder</button>
-        <button id="quieter" type="button" class="button">Make Quieter</button>
-		<p> </p>
-	
+			
 		<input id="master_slider" type="range" min="0" max="200" value="100"> Master Volume </input>
 
 
@@ -130,9 +126,7 @@
 			slider.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value, n);
                             });
-							
-		
-		
+									
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
 		audio.gain[n].connect(audio.master_gain);
@@ -144,6 +138,7 @@
 	    audio.gain[n].gain.value = fraction * fraction;
 		}
 		
+		/*
 		audio.increaseVolume = function() {
 		for (var n in audio.gain) {
 			var slider = document.getElementById("slider-" + n);
@@ -166,7 +161,8 @@
               
 					
 				}
-		}		
+		}
+          */		
 		
 		
 		audio.master_setup = function() {
@@ -185,6 +181,7 @@
 				audio.master_gain.gain.value = fraction;
 				}
 			
+			/*
 			var louder = document.getElementById("louder");
 				louder.addEventListener('click', function() { //change?
 				audio.increaseVolume();	
@@ -194,6 +191,7 @@
 				quieter.addEventListener('click', function() { //change? 
 				audio.decreaseVolume();    
 				});
+				*/
 		}
 		
 
