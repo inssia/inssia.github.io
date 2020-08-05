@@ -138,31 +138,7 @@
 	    audio.gain[n].gain.value = fraction * fraction;
 		}
 		
-		/*
-		audio.increaseVolume = function() {
-		for (var n in audio.gain) {
-			var slider = document.getElementById("slider-" + n);
-				if (slider.value < 100) {
-				slider.value = parseFloat(slider.value) + 5;
-				audio.gain[n].gain.value = audio.gain[n].gain.value/0.9;
-						}  
-                    
-					
-				}
-		}
 		
-		audio.decreaseVolume = function() {
-		for (var n in audio.gain) {
-			var slider = document.getElementById("slider-" + n);
-				if (slider.value > 0) {
-				slider.value = parseFloat(slider.value) - 5;
-				audio.gain[n].gain.value = audio.gain[n].gain.value * 0.9;
-						}  
-              
-					
-				}
-		}
-          */		
 		
 		
 		audio.master_setup = function() {
@@ -180,18 +156,7 @@
 				console.log(fraction);
 				audio.master_gain.gain.value = fraction;
 				}
-			
-			/*
-			var louder = document.getElementById("louder");
-				louder.addEventListener('click', function() { //change?
-				audio.increaseVolume();	
-				});
-				
-			var quieter = document.getElementById("quieter");
-				quieter.addEventListener('click', function() { //change? 
-				audio.decreaseVolume();    
-				});
-				*/
+		
 		}
 		
 
