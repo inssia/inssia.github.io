@@ -125,13 +125,15 @@
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
 		audio.gain[n].connect(audio.master_gain);
-		console.log("original value" + audio.gain[n].gain.value);
 		
 		var slider = document.getElementById("slider-" + n);
 			slider.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value, n);
                             });
-									
+		
+			audio.gain[n].gain.value = parseFloat(slider.value)/100;
+			console.log("original value" + audio.gain[n].gain.value);
+
 		}
 		
 					
