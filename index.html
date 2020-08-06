@@ -155,6 +155,9 @@
 			master_slider.addEventListener('change', function() { //change?
 									audio.controlAll(this.value);
 								});
+			
+			audio.master_gain.gain.value = parseFloat(master_slider.value)/100;
+			console.log("master value" + audio.master_gain.gain.value);
 								
 				audio.controlAll = function(volume) {
 				var fraction = parseFloat(volume)/100;
