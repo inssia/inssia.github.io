@@ -122,7 +122,7 @@
 
 
 	audio.setup_gain = function(n) {
-		audio.gain[n] = {};
+		//audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
 		audio.gain[n].connect(audio.master_gain);
 		
