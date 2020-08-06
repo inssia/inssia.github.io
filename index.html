@@ -125,6 +125,7 @@
 		audio.gain[n] = {};
 		audio.gain[n] = audio.context.createGain();
 		audio.gain[n].connect(audio.master_gain);
+		console.log("original value" + audio.gain[n].gain.value);
 		
 		var slider = document.getElementById("slider-" + n);
 			slider.addEventListener('change', function() { //change?
@@ -137,6 +138,7 @@
 		audio.changeVolume = function(element, n) {
 		var fraction = parseFloat(element) / 100;
 	    audio.gain[n].gain.value = fraction * fraction;
+		console.log("changed value" + audio.gain[n].gain.value);
 		}
 		
 		
