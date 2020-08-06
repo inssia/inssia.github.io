@@ -122,14 +122,15 @@
 
 
 	audio.setup_gain = function(n) {
+		audio.gain[n] = audio.context.createGain();
+		audio.gain[n].connect(audio.master_gain);
+		
 		var slider = document.getElementById("slider-" + n);
 			slider.addEventListener('change', function() { //change?
                                 audio.changeVolume(this.value, n);
                             });
 									
-		audio.gain[n] = {};
-		audio.gain[n] = audio.context.createGain();
-		audio.gain[n].connect(audio.master_gain);
+		//audio.gain[n] = {};
 		}
 		
 					
