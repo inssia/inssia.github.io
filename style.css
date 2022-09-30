@@ -1,0 +1,66 @@
+/* || GENERAL STYLES */
+
+body {
+    background-color: #FAF9F6;
+}
+  
+h1,  h2,  h3,  h4, h5, h6 {
+    font-family: 'Georgia', 'Times New Roman', Times, serif;
+    color: black;
+    text-align: center;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+.center {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+}
+
+.title {
+    font-size: 3rem;
+}
+
+.underconstruction{
+    font-size: 3rem;
+    margin-top: 10%;
+}
+
+button {
+    background-color: black;
+    border-radius: 2px;
+    border: 2px solid black;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #FAF9F6;
+    color: black;
+}
+
+.links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.links li {
+    font-size: 2rem;
+    margin: 2rem 0; 
+    padding-right: 8%;
+    text-align: center;
+}
+
+.links li :hover {
+    text-decoration: underline;
+}
+ 
