@@ -30,6 +30,10 @@ a {
     margin-top: 10%;
 }
 
+.header {
+    margin-left: 9%;
+}
+
 button {
     background-color: black;
     border-radius: 2px;
@@ -56,7 +60,6 @@ button:hover {
 .links li {
     font-size: 2rem;
     margin: 2rem 0; 
-    padding-right: 8%;
     text-align: center;
 }
 
