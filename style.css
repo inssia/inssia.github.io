@@ -66,4 +66,42 @@ button:hover {
 .links li :hover {
     text-decoration: underline;
 }
+
+@media screen and (max-width: 1520px) {
+    .header {
+        margin-left: 0%;
+        margin-right: auto;
+        text-align: center;
+    }
+    .links li {
+        padding-right: 20%;
+    }
+}
+
+@media screen and (max-width: 1384px) {
+    .links li {
+        padding-left: 15%;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .links li {
+        padding-left: 15%;
+    }
+    .title {
+        font-size: 2rem;
+    }
+    .links li {
+        font-size: 1.5rem;
+    }
+}
+ 
+@media screen and (max-width: 470px) {
+    .title {
+        font-size: 1rem;
+    }
+    .links li {
+        font-size: 0.8rem;
+    }
+}
  
